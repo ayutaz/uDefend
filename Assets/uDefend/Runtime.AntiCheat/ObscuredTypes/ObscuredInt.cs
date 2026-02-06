@@ -16,13 +16,17 @@ namespace uDefend.AntiCheat
 
         private ObscuredInt(int value)
         {
-            _key = GenerateKey();
+            _key = ObscuredRandom.Next();
             _encryptedValue = value ^ _key;
             _checksum = value ^ ChecksumSalt;
         }
 
+        private bool IsDefault() => _key == 0 && _encryptedValue == 0 && _checksum == 0;
+
         private int GetDecrypted()
         {
+            if (IsDefault()) return 0;
+
             int decrypted = _encryptedValue ^ _key;
             if ((decrypted ^ ChecksumSalt) != _checksum)
             {
@@ -33,15 +37,9 @@ namespace uDefend.AntiCheat
 
         private void SetEncrypted(int value)
         {
-            _key = GenerateKey();
+            _key = ObscuredRandom.Next();
             _encryptedValue = value ^ _key;
             _checksum = value ^ ChecksumSalt;
-        }
-
-        private static int GenerateKey()
-        {
-            int key = UnityEngine.Random.Range(1, int.MaxValue);
-            return key;
         }
 
         // Implicit conversions

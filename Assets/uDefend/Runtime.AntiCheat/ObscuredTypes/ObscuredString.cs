@@ -26,7 +26,7 @@ namespace uDefend.AntiCheat
                 return;
             }
 
-            _key = GenerateKey();
+            _key = ObscuredRandom.Next();
             _encryptedChars = new char[value.Length];
             for (int i = 0; i < value.Length; i++)
             {
@@ -66,7 +66,7 @@ namespace uDefend.AntiCheat
                 return;
             }
 
-            _key = GenerateKey();
+            _key = ObscuredRandom.Next();
             _encryptedChars = new char[value.Length];
             for (int i = 0; i < value.Length; i++)
             {
@@ -86,11 +86,7 @@ namespace uDefend.AntiCheat
             return hash;
         }
 
-        private static int GenerateKey()
-        {
-            int key = UnityEngine.Random.Range(1, int.MaxValue);
-            return key;
-        }
+        private bool IsDefault() => _key == 0 && _encryptedChars == null && _checksum == 0;
 
         // Implicit conversions
         public static implicit operator ObscuredString(string value) => new ObscuredString(value);

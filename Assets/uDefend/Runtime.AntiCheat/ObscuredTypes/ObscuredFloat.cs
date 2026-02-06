@@ -17,13 +17,17 @@ namespace uDefend.AntiCheat
         private ObscuredFloat(float value)
         {
             int bits = BitConverter.SingleToInt32Bits(value);
-            _key = GenerateKey();
+            _key = ObscuredRandom.Next();
             _encryptedValue = bits ^ _key;
             _checksum = bits ^ ChecksumSalt;
         }
 
+        private bool IsDefault() => _key == 0 && _encryptedValue == 0 && _checksum == 0;
+
         private float GetDecrypted()
         {
+            if (IsDefault()) return 0f;
+
             int bits = _encryptedValue ^ _key;
             if ((bits ^ ChecksumSalt) != _checksum)
             {
@@ -35,15 +39,9 @@ namespace uDefend.AntiCheat
         private void SetEncrypted(float value)
         {
             int bits = BitConverter.SingleToInt32Bits(value);
-            _key = GenerateKey();
+            _key = ObscuredRandom.Next();
             _encryptedValue = bits ^ _key;
             _checksum = bits ^ ChecksumSalt;
-        }
-
-        private static int GenerateKey()
-        {
-            int key = UnityEngine.Random.Range(1, int.MaxValue);
-            return key;
         }
 
         // Implicit conversions
