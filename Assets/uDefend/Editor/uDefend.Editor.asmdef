@@ -1,0 +1,19 @@
+{
+  "name": "uDefend.Editor",
+  "rootNamespace": "uDefend.Editor",
+  "references": [
+    "uDefend.Runtime",
+    "uDefend.AntiCheat"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

@@ -1,0 +1,26 @@
+{
+  "name": "uDefend.Tests.Editor",
+  "rootNamespace": "uDefend.Tests.Editor",
+  "references": [
+    "uDefend.Runtime",
+    "uDefend.AntiCheat",
+    "uDefend.Editor",
+    "UnityEngine.TestRunner",
+    "UnityEditor.TestRunner"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": true,
+  "precompiledReferences": [
+    "nunit.framework.dll"
+  ],
+  "autoReferenced": false,
+  "defineConstraints": [
+    "UNITY_INCLUDE_TESTS"
+  ],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

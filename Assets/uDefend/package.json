@@ -1,0 +1,42 @@
+{
+  "name": "com.udefend.core",
+  "version": "0.1.0",
+  "displayName": "uDefend",
+  "description": "Save data encryption and anti-cheat library for Unity",
+  "unity": "2022.3",
+  "unityRelease": "12f1",
+  "license": "MIT",
+  "keywords": [
+    "encryption",
+    "save",
+    "anti-cheat",
+    "security",
+    "obfuscation"
+  ],
+  "author": {
+    "name": "uDefend Contributors"
+  },
+  "dependencies": {},
+  "samples": [
+    {
+      "displayName": "Basic Usage",
+      "description": "Basic Save/Load example",
+      "path": "Samples~/BasicUsage"
+    },
+    {
+      "displayName": "Advanced Encryption",
+      "description": "Custom IEncryptionProvider example",
+      "path": "Samples~/AdvancedEncryption"
+    },
+    {
+      "displayName": "Migration",
+      "description": "Version migration example",
+      "path": "Samples~/Migration"
+    },
+    {
+      "displayName": "Anti-Cheat",
+      "description": "ObscuredTypes and Detector setup example",
+      "path": "Samples~/AntiCheat"
+    }
+  ]
+}
