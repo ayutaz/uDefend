@@ -4,16 +4,17 @@ using uDefend.Encryption;
 
 namespace uDefend.KeyManagement
 {
-    public sealed class Pbkdf2KeyProvider : IKeyProvider
+    public sealed class Pbkdf2KeyProvider : IKeyProvider, IDisposable
     {
         private const int Iterations = 600_000;
         private const int SaltSize = 16;
         private const int DerivedKeySize = 32;
         private static readonly HashAlgorithmName HashAlgorithm = HashAlgorithmName.SHA256;
 
-        private readonly byte[] _passphrase;
+        private byte[] _passphrase;
         private byte[] _salt;
         private byte[] _cachedKey;
+        private bool _disposed;
 
         public Pbkdf2KeyProvider(byte[] passphrase) : this(passphrase, null) { }
 
@@ -34,25 +35,23 @@ namespace uDefend.KeyManagement
 
         public byte[] GetMasterKey()
         {
-            if (_cachedKey != null)
-                return _cachedKey;
+            if (_disposed) throw new ObjectDisposedException(nameof(Pbkdf2KeyProvider));
 
-            if (_salt == null)
-                _salt = CryptoUtility.GenerateRandomBytes(SaltSize);
-
-            using (var pbkdf2 = new Rfc2898DeriveBytes(_passphrase, _salt, Iterations, HashAlgorithm))
+            if (_cachedKey == null)
             {
-                _cachedKey = pbkdf2.GetBytes(DerivedKeySize);
+                if (_salt == null)
+                    _salt = CryptoUtility.GenerateRandomBytes(SaltSize);
+
+                using (var pbkdf2 = new Rfc2898DeriveBytes(_passphrase, _salt, Iterations, HashAlgorithm))
+                {
+                    _cachedKey = pbkdf2.GetBytes(DerivedKeySize);
+                }
             }
 
-            return _cachedKey;
-        }
-
-        public void StoreMasterKey(byte[] key)
-        {
-            // PBKDF2 derives keys from passphrase; external keys cannot be stored.
-            throw new NotSupportedException(
-                "Pbkdf2KeyProvider derives keys from a passphrase. Use a platform key provider to store externally provided keys.");
+            // Return defensive copy so callers cannot corrupt the cached key
+            var copy = new byte[_cachedKey.Length];
+            Buffer.BlockCopy(_cachedKey, 0, copy, 0, _cachedKey.Length);
+            return copy;
         }
 
         public bool HasMasterKey()
@@ -68,6 +67,28 @@ namespace uDefend.KeyManagement
             var copy = new byte[_salt.Length];
             Buffer.BlockCopy(_salt, 0, copy, 0, _salt.Length);
             return copy;
+        }
+
+        public void Dispose()
+        {
+            if (_disposed) return;
+            _disposed = true;
+
+            if (_cachedKey != null)
+            {
+                CryptoUtility.SecureClear(_cachedKey);
+                _cachedKey = null;
+            }
+            if (_passphrase != null)
+            {
+                CryptoUtility.SecureClear(_passphrase);
+                _passphrase = null;
+            }
+            if (_salt != null)
+            {
+                CryptoUtility.SecureClear(_salt);
+                _salt = null;
+            }
         }
     }
 }

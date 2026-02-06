@@ -52,7 +52,7 @@ namespace uDefend.Tests.KeyManagement
         }
 
         [Test]
-        public void GetMasterKey_CalledMultipleTimes_ReturnsSameKey()
+        public void GetMasterKey_CalledMultipleTimes_ReturnsSameValue()
         {
             var passphrase = System.Text.Encoding.UTF8.GetBytes("test-passphrase");
             var salt = CryptoUtility.GenerateRandomBytes(16);
@@ -61,17 +61,8 @@ namespace uDefend.Tests.KeyManagement
             byte[] key1 = provider.GetMasterKey();
             byte[] key2 = provider.GetMasterKey();
 
-            Assert.AreSame(key1, key2, "Cached key should return the same instance.");
-        }
-
-        [Test]
-        public void StoreMasterKey_ThrowsNotSupportedException()
-        {
-            var passphrase = System.Text.Encoding.UTF8.GetBytes("test-passphrase");
-            var provider = new Pbkdf2KeyProvider(passphrase);
-
-            Assert.Throws<NotSupportedException>(() =>
-                provider.StoreMasterKey(new byte[32]));
+            Assert.AreEqual(key1, key2, "Cached key should return the same value.");
+            Assert.AreNotSame(key1, key2, "Should return defensive copies, not the same instance.");
         }
 
         [Test]

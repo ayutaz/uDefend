@@ -25,6 +25,7 @@ namespace uDefend.KeyManagement
 
             byte[] masterKey = _keyProvider.GetMasterKey();
             KeyDerivation.DeriveKeys(masterKey, out byte[] masterEncKey, out byte[] masterHmacKey);
+            CryptoUtility.SecureClear(masterKey);
 
             // Generate a random DEK
             byte[] dek = CryptoUtility.GenerateRandomBytes(DekSize);
@@ -52,6 +53,7 @@ namespace uDefend.KeyManagement
 
             byte[] masterKey = _keyProvider.GetMasterKey();
             KeyDerivation.DeriveKeys(masterKey, out byte[] masterEncKey, out byte[] masterHmacKey);
+            CryptoUtility.SecureClear(masterKey);
 
             // Decrypt DEK
             byte[] dek;
@@ -92,6 +94,7 @@ namespace uDefend.KeyManagement
             // Decrypt DEK with old master key
             byte[] oldMasterKey = _keyProvider.GetMasterKey();
             KeyDerivation.DeriveKeys(oldMasterKey, out byte[] oldMasterEncKey, out byte[] oldMasterHmacKey);
+            CryptoUtility.SecureClear(oldMasterKey);
 
             byte[] dek;
             try
@@ -107,6 +110,7 @@ namespace uDefend.KeyManagement
             // Re-encrypt DEK with new master key
             byte[] newMasterKey = newKeyProvider.GetMasterKey();
             KeyDerivation.DeriveKeys(newMasterKey, out byte[] newMasterEncKey, out byte[] newMasterHmacKey);
+            CryptoUtility.SecureClear(newMasterKey);
 
             byte[] newEncryptedDek;
             try
