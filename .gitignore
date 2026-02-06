@@ -1,0 +1,82 @@
+# =============== #
+# Unity generated  #
+# =============== #
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+
+# ============= #
+# Memory Captures #
+# ============= #
+/[Mm]emoryCaptures/
+
+# ============= #
+# Recordings     #
+# ============= #
+/[Rr]ecordings/
+
+# ============ #
+# Asset Bundles #
+# ============ #
+/[Aa]sset[Bb]undles/
+/[Ss]treamingAssets/
+
+# ===================== #
+# Visual Studio / Rider  #
+# ===================== #
+.vs/
+.vscode/
+.idea/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# ============ #
+# OS generated  #
+# ============ #
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ============== #
+# Crash reports   #
+# ============== #
+sysinfo.txt
+crashlytics-build.properties
+
+# ====================== #
+# Builds / Compiled output #
+# ====================== #
+*.apk
+*.aab
+*.unitypackage
+*.app
+
+# ============ #
+# Nuget packages #
+# ============ #
+/[Nn]uget/
+
+# ================== #
+# Code coverage results #
+# ================== #
+/[Cc]ode[Cc]overage/
