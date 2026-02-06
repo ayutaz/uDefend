@@ -1,0 +1,115 @@
+using System;
+using UnityEngine;
+
+namespace uDefend.AntiCheat
+{
+    [Serializable]
+    public struct ObscuredString : IEquatable<ObscuredString>
+    {
+        private const int ChecksumSalt = 0x4E6A_B8D3;
+
+        public static event Action OnCheatingDetected;
+
+        [SerializeField] private char[] _encryptedChars;
+        [SerializeField] private int _key;
+        [SerializeField] private int _checksum;
+
+        public int Length => _encryptedChars == null ? 0 : _encryptedChars.Length;
+
+        private ObscuredString(string value)
+        {
+            if (value == null)
+            {
+                _encryptedChars = null;
+                _key = 0;
+                _checksum = ChecksumSalt;
+                return;
+            }
+
+            _key = GenerateKey();
+            _encryptedChars = new char[value.Length];
+            for (int i = 0; i < value.Length; i++)
+            {
+                _encryptedChars[i] = (char)(value[i] ^ (_key + i));
+            }
+            _checksum = ComputeChecksum(value);
+        }
+
+        private string GetDecrypted()
+        {
+            if (_encryptedChars == null)
+            {
+                return null;
+            }
+
+            char[] decrypted = new char[_encryptedChars.Length];
+            for (int i = 0; i < _encryptedChars.Length; i++)
+            {
+                decrypted[i] = (char)(_encryptedChars[i] ^ (_key + i));
+            }
+
+            string result = new string(decrypted);
+            if (ComputeChecksum(result) != _checksum)
+            {
+                OnCheatingDetected?.Invoke();
+            }
+            return result;
+        }
+
+        private void SetEncrypted(string value)
+        {
+            if (value == null)
+            {
+                _encryptedChars = null;
+                _key = 0;
+                _checksum = ChecksumSalt;
+                return;
+            }
+
+            _key = GenerateKey();
+            _encryptedChars = new char[value.Length];
+            for (int i = 0; i < value.Length; i++)
+            {
+                _encryptedChars[i] = (char)(value[i] ^ (_key + i));
+            }
+            _checksum = ComputeChecksum(value);
+        }
+
+        private static int ComputeChecksum(string value)
+        {
+            if (value == null) return ChecksumSalt;
+            int hash = ChecksumSalt;
+            for (int i = 0; i < value.Length; i++)
+            {
+                hash = hash * 31 + value[i];
+            }
+            return hash;
+        }
+
+        private static int GenerateKey()
+        {
+            int key = UnityEngine.Random.Range(1, int.MaxValue);
+            return key;
+        }
+
+        // Implicit conversions
+        public static implicit operator ObscuredString(string value) => new ObscuredString(value);
+        public static implicit operator string(ObscuredString value) => value.GetDecrypted();
+
+        // Concatenation
+        public static ObscuredString operator +(ObscuredString a, ObscuredString b) => new ObscuredString(a.GetDecrypted() + b.GetDecrypted());
+        public static ObscuredString operator +(ObscuredString a, string b) => new ObscuredString(a.GetDecrypted() + b);
+        public static ObscuredString operator +(string a, ObscuredString b) => new ObscuredString(a + b.GetDecrypted());
+
+        // Equality operators
+        public static bool operator ==(ObscuredString a, ObscuredString b) => string.Equals(a.GetDecrypted(), b.GetDecrypted());
+        public static bool operator !=(ObscuredString a, ObscuredString b) => !string.Equals(a.GetDecrypted(), b.GetDecrypted());
+
+        // IEquatable<ObscuredString>
+        public bool Equals(ObscuredString other) => string.Equals(GetDecrypted(), other.GetDecrypted());
+
+        public override string ToString() => GetDecrypted() ?? string.Empty;
+        public override int GetHashCode() => GetDecrypted()?.GetHashCode() ?? 0;
+        public override bool Equals(object obj) => obj is ObscuredString other && Equals(other);
+    }
+}
