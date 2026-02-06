@@ -10,6 +10,9 @@ namespace uDefend.Serialization
     {
         public byte[] Serialize<T>(T obj)
         {
+            if (obj == null)
+                throw new ArgumentNullException(nameof(obj));
+
 #if UDEFEND_MESSAGEPACK
             return MessagePack.MessagePackSerializer.Serialize(obj);
 #else
@@ -20,6 +23,11 @@ namespace uDefend.Serialization
 
         public T Deserialize<T>(byte[] data)
         {
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
+            if (data.Length == 0)
+                throw new ArgumentException("Data cannot be empty.", nameof(data));
+
 #if UDEFEND_MESSAGEPACK
             return MessagePack.MessagePackSerializer.Deserialize<T>(data);
 #else
