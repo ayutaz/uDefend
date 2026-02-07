@@ -13,6 +13,7 @@ namespace uDefend.AntiCheat
         [SerializeField] private char[] _encryptedChars;
         [SerializeField] private int _key;
         [SerializeField] private int _checksum;
+        [SerializeField] private string _fakeValue;
 
         public int Length => _encryptedChars == null ? 0 : _encryptedChars.Length;
 
@@ -23,6 +24,7 @@ namespace uDefend.AntiCheat
                 _encryptedChars = null;
                 _key = 0;
                 _checksum = ChecksumSalt;
+                _fakeValue = null;
                 return;
             }
 
@@ -33,12 +35,17 @@ namespace uDefend.AntiCheat
                 _encryptedChars[i] = (char)(value[i] ^ (_key + i));
             }
             _checksum = ComputeChecksum(value);
+            _fakeValue = value;
         }
 
         private string GetDecrypted()
         {
             if (_encryptedChars == null)
             {
+                if (!IsDefault() && _fakeValue != null)
+                {
+                    OnCheatingDetected?.Invoke();
+                }
                 return null;
             }
 
@@ -49,10 +56,19 @@ namespace uDefend.AntiCheat
             }
 
             string result = new string(decrypted);
-            if (ComputeChecksum(result) != _checksum)
+
+            bool checksumFailed = ComputeChecksum(result) != _checksum;
+            bool decoyTampered = !string.Equals(_fakeValue, result, StringComparison.Ordinal);
+
+            if (checksumFailed || decoyTampered)
             {
                 OnCheatingDetected?.Invoke();
             }
+
+            // Note: re-encryption is NOT safe for ObscuredString because _encryptedChars
+            // is a reference type (char[]). Struct copy semantics would cause the shared
+            // array to be re-encrypted while the original struct retains the old _key.
+
             return result;
         }
 
@@ -63,6 +79,7 @@ namespace uDefend.AntiCheat
                 _encryptedChars = null;
                 _key = 0;
                 _checksum = ChecksumSalt;
+                _fakeValue = null;
                 return;
             }
 
@@ -73,6 +90,7 @@ namespace uDefend.AntiCheat
                 _encryptedChars[i] = (char)(value[i] ^ (_key + i));
             }
             _checksum = ComputeChecksum(value);
+            _fakeValue = value;
         }
 
         private static int ComputeChecksum(string value)

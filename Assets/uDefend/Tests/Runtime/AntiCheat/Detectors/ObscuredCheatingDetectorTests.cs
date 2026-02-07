@@ -56,6 +56,9 @@ namespace uDefend.Tests.AntiCheat.Detectors
             detector.OnCheatingDetected = new UnityEngine.Events.UnityEvent();
             detector.OnCheatingDetected.AddListener(() => cheatingDetected = true);
 
+            // Shorten check interval so PerformCheck runs quickly after tampering
+            SetCheckInterval(detector, 0.05f);
+
             yield return null;
             Assert.IsTrue(detector.IsRunning);
 
@@ -86,6 +89,9 @@ namespace uDefend.Tests.AntiCheat.Detectors
             bool cheatingDetected = false;
             detector.OnCheatingDetected = new UnityEngine.Events.UnityEvent();
             detector.OnCheatingDetected.AddListener(() => cheatingDetected = true);
+
+            // Shorten check interval so PerformCheck runs quickly after tampering
+            SetCheckInterval(detector, 0.05f);
 
             yield return null;
             Assert.IsTrue(detector.IsRunning);
@@ -140,6 +146,12 @@ namespace uDefend.Tests.AntiCheat.Detectors
 
             Assert.IsFalse(cheatingDetected,
                 "Detector should not fire after StopDetection even if ObscuredTypes are tampered with.");
+        }
+        private static void SetCheckInterval(DetectorBase detector, float interval)
+        {
+            var field = typeof(DetectorBase).GetField("_checkInterval",
+                BindingFlags.NonPublic | BindingFlags.Instance);
+            field.SetValue(detector, interval);
         }
     }
 }

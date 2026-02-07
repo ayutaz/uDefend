@@ -71,7 +71,14 @@ public class AntiCheatExample : MonoBehaviour
         obscuredCheating.OnCheatingDetected.AddListener(() =>
             Debug.LogWarning("[Detector] ObscuredType memory tampering detected!"));
 
-        Debug.Log("All 5 detectors initialized (autoStart = true).");
+        // --- AntiDebugDetector ---
+        // Detects managed debuggers, debug environment variables, suspicious processes,
+        // and breakpoint-induced timing anomalies.
+        var antiDebug = gameObject.AddComponent<AntiDebugDetector>();
+        antiDebug.OnCheatingDetected.AddListener(() =>
+            Debug.LogWarning("[Detector] Debugger or cheat tool detected!"));
+
+        Debug.Log("All 6 detectors initialized (autoStart = true).");
     }
 
     private void SetupCheatingDetection()

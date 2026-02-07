@@ -13,12 +13,14 @@ namespace uDefend.AntiCheat
         [SerializeField] private int _encryptedValue;
         [SerializeField] private int _key;
         [SerializeField] private int _checksum;
+        [SerializeField] private int _fakeValue;
 
         private ObscuredUint(uint value)
         {
             _key = ObscuredRandom.Next();
             _encryptedValue = (int)(value ^ (uint)_key);
             _checksum = (int)(value ^ (uint)ChecksumSalt);
+            _fakeValue = (int)value;
         }
 
         private bool IsDefault() => _key == 0 && _encryptedValue == 0 && _checksum == 0;
@@ -28,10 +30,16 @@ namespace uDefend.AntiCheat
             if (IsDefault()) return 0;
 
             uint decrypted = (uint)_encryptedValue ^ (uint)_key;
-            if ((decrypted ^ (uint)ChecksumSalt) != (uint)_checksum)
+
+            if ((decrypted ^ (uint)ChecksumSalt) != (uint)_checksum || (uint)_fakeValue != decrypted)
             {
                 OnCheatingDetected?.Invoke();
             }
+
+            int newKey = ObscuredRandom.Next();
+            _encryptedValue = (int)(decrypted ^ (uint)newKey);
+            _key = newKey;
+
             return decrypted;
         }
 
@@ -40,6 +48,7 @@ namespace uDefend.AntiCheat
             _key = ObscuredRandom.Next();
             _encryptedValue = (int)(value ^ (uint)_key);
             _checksum = (int)(value ^ (uint)ChecksumSalt);
+            _fakeValue = (int)value;
         }
 
         // Implicit conversions

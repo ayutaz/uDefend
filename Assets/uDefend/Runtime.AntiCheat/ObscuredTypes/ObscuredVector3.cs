@@ -17,6 +17,9 @@ namespace uDefend.AntiCheat
         [SerializeField] private int _keyY;
         [SerializeField] private int _keyZ;
         [SerializeField] private int _checksum;
+        [SerializeField] private float _fakeX;
+        [SerializeField] private float _fakeY;
+        [SerializeField] private float _fakeZ;
 
         private ObscuredVector3(Vector3 value)
         {
@@ -30,6 +33,9 @@ namespace uDefend.AntiCheat
             _encryptedY = bitsY ^ _keyY;
             _encryptedZ = bitsZ ^ _keyZ;
             _checksum = bitsX ^ bitsY ^ bitsZ ^ ChecksumSalt;
+            _fakeX = value.x;
+            _fakeY = value.y;
+            _fakeZ = value.z;
         }
 
         private bool IsDefault() =>
@@ -44,10 +50,27 @@ namespace uDefend.AntiCheat
             int bitsX = _encryptedX ^ _keyX;
             int bitsY = _encryptedY ^ _keyY;
             int bitsZ = _encryptedZ ^ _keyZ;
-            if ((bitsX ^ bitsY ^ bitsZ ^ ChecksumSalt) != _checksum)
+
+            bool checksumFailed = (bitsX ^ bitsY ^ bitsZ ^ ChecksumSalt) != _checksum;
+            bool decoyTampered = BitConverter.SingleToInt32Bits(_fakeX) != bitsX
+                              || BitConverter.SingleToInt32Bits(_fakeY) != bitsY
+                              || BitConverter.SingleToInt32Bits(_fakeZ) != bitsZ;
+
+            if (checksumFailed || decoyTampered)
             {
                 OnCheatingDetected?.Invoke();
             }
+
+            int newKeyX = ObscuredRandom.Next();
+            int newKeyY = ObscuredRandom.Next();
+            int newKeyZ = ObscuredRandom.Next();
+            _encryptedX = bitsX ^ newKeyX;
+            _encryptedY = bitsY ^ newKeyY;
+            _encryptedZ = bitsZ ^ newKeyZ;
+            _keyX = newKeyX;
+            _keyY = newKeyY;
+            _keyZ = newKeyZ;
+
             return new Vector3(
                 BitConverter.Int32BitsToSingle(bitsX),
                 BitConverter.Int32BitsToSingle(bitsY),
@@ -66,6 +89,9 @@ namespace uDefend.AntiCheat
             _encryptedY = bitsY ^ _keyY;
             _encryptedZ = bitsZ ^ _keyZ;
             _checksum = bitsX ^ bitsY ^ bitsZ ^ ChecksumSalt;
+            _fakeX = value.x;
+            _fakeY = value.y;
+            _fakeZ = value.z;
         }
 
         // Implicit conversions

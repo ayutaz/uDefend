@@ -15,6 +15,8 @@ namespace uDefend.AntiCheat
         [SerializeField] private int _keyX;
         [SerializeField] private int _keyY;
         [SerializeField] private int _checksum;
+        [SerializeField] private int _fakeX;
+        [SerializeField] private int _fakeY;
 
         private ObscuredVector2Int(Vector2Int value)
         {
@@ -23,6 +25,8 @@ namespace uDefend.AntiCheat
             _encryptedX = value.x ^ _keyX;
             _encryptedY = value.y ^ _keyY;
             _checksum = value.x ^ value.y ^ ChecksumSalt;
+            _fakeX = value.x;
+            _fakeY = value.y;
         }
 
         private bool IsDefault() =>
@@ -36,10 +40,22 @@ namespace uDefend.AntiCheat
 
             int x = _encryptedX ^ _keyX;
             int y = _encryptedY ^ _keyY;
-            if ((x ^ y ^ ChecksumSalt) != _checksum)
+
+            bool checksumFailed = (x ^ y ^ ChecksumSalt) != _checksum;
+            bool decoyTampered = _fakeX != x || _fakeY != y;
+
+            if (checksumFailed || decoyTampered)
             {
                 OnCheatingDetected?.Invoke();
             }
+
+            int newKeyX = ObscuredRandom.Next();
+            int newKeyY = ObscuredRandom.Next();
+            _encryptedX = x ^ newKeyX;
+            _encryptedY = y ^ newKeyY;
+            _keyX = newKeyX;
+            _keyY = newKeyY;
+
             return new Vector2Int(x, y);
         }
 
@@ -50,6 +66,8 @@ namespace uDefend.AntiCheat
             _encryptedX = value.x ^ _keyX;
             _encryptedY = value.y ^ _keyY;
             _checksum = value.x ^ value.y ^ ChecksumSalt;
+            _fakeX = value.x;
+            _fakeY = value.y;
         }
 
         // Implicit conversions
