@@ -103,8 +103,8 @@ Assets/uDefend/
 │   ├── ObscuredPrefs.cs
 │   └── ObscuredFilePrefs.cs
 ├── Editor/                     # PropertyDrawer (19 types), EditorWindow (2 types)
-├── Tests/                      # 190+ unit tests
-├── Samples~/                   # 4 samples
+├── Tests/                      # Unit tests
+├── Samples~/                   # Sample scenes
 └── Documentation~/             # Documentation
 ```
 
@@ -118,12 +118,6 @@ Assets/uDefend/
 - Constant-time HMAC comparison (timing attack prevention)
 - Post-use buffer zeroing (`Array.Clear`)
 - No deprecated APIs (`RijndaelManaged`, `BinaryFormatter`, `DES`, `MD5`)
-
-## Save File Format
-
-```
-| Magic "uSAV" (4B) | Version (2B) | Flags (2B) | IV (16B) | Encrypted Data (variable) | HMAC-SHA256 (32B) |
-```
 
 ## Documentation
 
@@ -145,13 +139,6 @@ Import from Unity Package Manager > uDefend > Samples:
 | Advanced Encryption | Low-level encryption API, custom IEncryptionProvider |
 | Migration | Version-based save data migration |
 | Anti-Cheat | ObscuredTypes and cheat detection Detector setup |
-
-## Tests
-
-190+ unit tests covering all modules:
-- ObscuredTypes (59+ tests / all 19 types)
-- Detectors (35 tests / all 6 types + DetectorBase)
-- Encryption, key management, migration, serialization
 
 ## License
 

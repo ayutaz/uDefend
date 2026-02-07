@@ -103,8 +103,8 @@ Assets/uDefend/
 │   ├── ObscuredPrefs.cs
 │   └── ObscuredFilePrefs.cs
 ├── Editor/                     # PropertyDrawer (19型), EditorWindow (2種)
-├── Tests/                      # 190+ ユニットテスト
-├── Samples~/                   # 4サンプル
+├── Tests/                      # ユニットテスト
+├── Samples~/                   # サンプルシーン
 └── Documentation~/             # ドキュメント
 ```
 
@@ -118,12 +118,6 @@ Assets/uDefend/
 - 定数時間 HMAC 比較（タイミング攻撃防止）
 - 使用後バッファのゼロクリア（`Array.Clear`）
 - 非推奨 API 不使用（`RijndaelManaged`, `BinaryFormatter`, `DES`, `MD5`）
-
-## セーブファイルフォーマット
-
-```
-| Magic "uSAV" (4B) | Version (2B) | Flags (2B) | IV (16B) | Encrypted Data (可変) | HMAC-SHA256 (32B) |
-```
 
 ## ドキュメント
 
@@ -145,13 +139,6 @@ Unity Package Manager > uDefend > Samples からインポート:
 | Advanced Encryption | 低レベル暗号化 API, カスタム IEncryptionProvider |
 | Migration | バージョンベースのセーブデータマイグレーション |
 | Anti-Cheat | ObscuredTypes とチート検知 Detector のセットアップ |
-
-## テスト
-
-190+ ユニットテストで全モジュールをカバー:
-- ObscuredTypes (59+ tests / 全19型)
-- Detectors (35 tests / 全6種 + DetectorBase)
-- 暗号化, 鍵管理, マイグレーション, シリアライズ
 
 ## ライセンス
 
