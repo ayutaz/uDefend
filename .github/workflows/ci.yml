@@ -1,0 +1,112 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+
+env:
+  UNITY_VERSION: 6000.3.6f1
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Job 1: PlayMode テスト実行
+  # ---------------------------------------------------------------------------
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-test-${{ hashFiles('Assets/**', 'Packages/manifest.json') }}
+          restore-keys: |
+            Library-test-
+
+      - uses: game-ci/unity-test-runner@v4
+        id: tests
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          unityVersion: ${{ env.UNITY_VERSION }}
+          testMode: playmode
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          checkName: Test Results
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Test Results
+          path: ${{ steps.tests.outputs.artifactsPath }}
+
+  # ---------------------------------------------------------------------------
+  # Job 2: コンパイル検証（StandaloneLinux64 ビルド）
+  # ---------------------------------------------------------------------------
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-build-${{ hashFiles('Assets/**', 'Packages/manifest.json') }}
+          restore-keys: |
+            Library-build-
+
+      - uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          unityVersion: ${{ env.UNITY_VERSION }}
+          targetPlatform: StandaloneLinux64
+
+  # ---------------------------------------------------------------------------
+  # Job 3: .unitypackage 生成 & GitHub Release（vタグ push 時のみ）
+  # ---------------------------------------------------------------------------
+  release:
+    name: Release
+    needs: [test, build]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-build-${{ hashFiles('Assets/**', 'Packages/manifest.json') }}
+          restore-keys: |
+            Library-build-
+
+      - uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          unityVersion: ${{ env.UNITY_VERSION }}
+          targetPlatform: StandaloneLinux64
+          buildMethod: uDefend.Editor.PackageBuilder.Export
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: uDefend.unitypackage
