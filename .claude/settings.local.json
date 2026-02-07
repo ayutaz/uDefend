@@ -47,7 +47,9 @@
       "Bash(done)",
       "Bash(do:*)",
       "Bash(for type in ObscuredRandom ObscuredDecimal ObscuredChar)",
-      "Bash(echo:*)"
+      "Bash(echo:*)",
+      "mcp__uLoopMCP__clear-console",
+      "Bash(Start-Sleep -Seconds 5)"
     ]
   },
   "enableAllProjectMcpServers": true,
