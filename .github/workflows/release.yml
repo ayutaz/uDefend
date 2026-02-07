@@ -1,0 +1,42 @@
+name: Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  package:
+    name: Build .unitypackage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build .unitypackage
+        run: |
+          set -euo pipefail
+          WORKDIR=$(mktemp -d)
+          # Assets/uDefend 配下の .meta を列挙（Tests 除外）
+          find Assets/uDefend -name '*.meta' \
+            ! -path 'Assets/uDefend/Tests/*' \
+            ! -path 'Assets/uDefend/Tests.meta' \
+          | while IFS= read -r meta; do
+            guid=$(grep -oP '^guid:\s*\K[0-9a-f]+' "$meta")
+            [ -z "$guid" ] && continue
+            dir="$WORKDIR/$guid"
+            mkdir -p "$dir"
+            # pathname = meta から .meta を除いたパス
+            asset="${meta%.meta}"
+            echo "$asset" > "$dir/pathname"
+            cp "$meta" "$dir/asset.meta"
+            # ファイルの場合のみ asset をコピー（ディレクトリの場合は省略）
+            if [ -f "$asset" ]; then
+              cp "$asset" "$dir/asset"
+            fi
+          done
+          # tar.gz 生成
+          (cd "$WORKDIR" && tar czf -) > uDefend.unitypackage
+          echo "Package created: $(du -h uDefend.unitypackage | cut -f1)"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: uDefend.unitypackage
+          path: uDefend.unitypackage
