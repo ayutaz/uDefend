@@ -1,5 +1,7 @@
 # uDefend
 
+[English](README.en.md) | **日本語**
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](Assets/uDefend/LICENSE)
 [![Unity](https://img.shields.io/badge/Unity-2022.3%2B-black.svg)](https://unity.com/)
 
@@ -101,7 +103,7 @@ Assets/uDefend/
 │   ├── ObscuredPrefs.cs
 │   └── ObscuredFilePrefs.cs
 ├── Editor/                     # PropertyDrawer (19型), EditorWindow (2種)
-├── Tests/                      # 137+ ユニットテスト
+├── Tests/                      # 160+ ユニットテスト
 ├── Samples~/                   # 4サンプル
 └── Documentation~/             # ドキュメント
 ```
@@ -146,8 +148,9 @@ Unity Package Manager > uDefend > Samples からインポート:
 
 ## テスト
 
-137+ ユニットテストで全モジュールをカバー:
+160+ ユニットテストで全モジュールをカバー:
 - ObscuredTypes (52+ tests / 全19型)
+- Detectors (22 tests / 全5種 + DetectorBase)
 - 暗号化, 鍵管理, マイグレーション, シリアライズ
 
 ## ライセンス
