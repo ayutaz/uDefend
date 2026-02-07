@@ -53,15 +53,15 @@ byte[] Decrypt(byte[] ciphertext, byte[] encryptionKey, byte[] hmacKey)
 
 ```csharp
 static byte[] GenerateRandomBytes(int length)
-static bool FixedTimeEquals(byte[] a, byte[] b)
+static bool ConstantTimeEquals(byte[] a, byte[] b)
 static void SecureClear(byte[] buffer)
 ```
 
 ### StringEncryption
 
 ```csharp
-static string Encrypt(string plaintext, string password)
-static string Decrypt(string ciphertext, string password)
+static string EncryptString(string plaintext, byte[] encryptionKey, byte[] hmacKey, IEncryptionProvider provider = null)
+static string DecryptString(string base64Ciphertext, byte[] encryptionKey, byte[] hmacKey, IEncryptionProvider provider = null)
 ```
 
 ## Key Management
