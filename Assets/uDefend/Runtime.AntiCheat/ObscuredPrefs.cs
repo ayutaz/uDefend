@@ -148,7 +148,7 @@ namespace uDefend.AntiCheat
 
         // --- Internal helpers ---
 
-        internal static string HashKey(string rawKey)
+        public static string HashKey(string rawKey)
         {
             using (var sha = SHA256.Create())
             {

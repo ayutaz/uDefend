@@ -6,6 +6,7 @@ using UnityEngine;
 using uDefend.Core;
 using uDefend.Encryption;
 using uDefend.KeyManagement;
+using uDefend.Serialization;
 
 namespace uDefend.Tests.Core
 {
