@@ -21,9 +21,57 @@ public class AntiCheatExample : MonoBehaviour
 
     private void Start()
     {
+        SetupDetectors();
         SetupCheatingDetection();
         DemoObscuredTypes();
         DemoObscuredPrefs();
+    }
+
+    /// <summary>
+    /// Programmatic Detector setup.
+    /// Each detector inherits from DetectorBase with _autoStart = true by default,
+    /// so AddComponent alone starts detection immediately.
+    ///
+    /// Alternative: add the detector components in the Inspector and configure
+    /// thresholds / callbacks visually — no code required.
+    /// </summary>
+    private void SetupDetectors()
+    {
+        Debug.Log("=== Detector Setup ===");
+
+        // --- SpeedHackDetector ---
+        // Compares System.Diagnostics.Stopwatch against Time.realtimeSinceStartup.
+        var speedHack = gameObject.AddComponent<SpeedHackDetector>();
+        speedHack.OnCheatingDetected.AddListener(() =>
+            Debug.LogWarning("[Detector] Speed hack detected!"));
+
+        // --- TimeCheatingDetector ---
+        // Detects system clock manipulation (forward jumps / backward time travel).
+        var timeCheating = gameObject.AddComponent<TimeCheatingDetector>();
+        timeCheating.OnCheatingDetected.AddListener(() =>
+            Debug.LogWarning("[Detector] Time cheating detected!"));
+
+        // --- WallHackDetector ---
+        // Creates a hidden physics sandbox; detects collision disabling.
+        var wallHack = gameObject.AddComponent<WallHackDetector>();
+        wallHack.OnCheatingDetected.AddListener(() =>
+            Debug.LogWarning("[Detector] Wall hack detected!"));
+
+        // --- InjectionDetector ---
+        // Snapshots loaded assemblies at start; flags unknown DLLs loaded later.
+        var injection = gameObject.AddComponent<InjectionDetector>();
+        injection.OnCheatingDetected.AddListener(() =>
+            Debug.LogWarning("[Detector] DLL injection detected!"));
+
+        // --- ObscuredCheatingDetector ---
+        // Subscribes to all 19 ObscuredType cheating events automatically.
+        // This is the component-based counterpart to the manual event subscriptions
+        // in SetupCheatingDetection() below.
+        var obscuredCheating = gameObject.AddComponent<ObscuredCheatingDetector>();
+        obscuredCheating.OnCheatingDetected.AddListener(() =>
+            Debug.LogWarning("[Detector] ObscuredType memory tampering detected!"));
+
+        Debug.Log("All 5 detectors initialized (autoStart = true).");
     }
 
     private void SetupCheatingDetection()
