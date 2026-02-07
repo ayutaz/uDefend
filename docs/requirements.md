@@ -98,7 +98,8 @@
 | FR-7.7 | 壁抜け検知（壁越し射撃・移動・視認のサンドボックス検出）を提供する | 推奨 | WallHackDetector 相当 |
 | FR-7.8 | 不正アセンブリ注入検知（ビルド時アセンブリリスト vs 実行時比較）を提供する | 推奨 | InjectionDetector 相当 |
 | FR-7.9 | PlayerPrefs の暗号化保存・読み込み API（ObscuredPrefs）を提供する | 必須 | ObscuredPrefs 相当 |
-| FR-7.10 | 全 Detector はコードレスでも Inspector から設定・利用可能にする | 推奨 | ACTk の UX に合わせる |
+| FR-7.10 | デバッガ検知（マネージドデバッガ、環境変数、不審プロセス、ブレークポイントタイミング）を提供する | 推奨 | AntiDebugDetector 相当 |
+| FR-7.11 | 全 Detector はコードレスでも Inspector から設定・利用可能にする | 推奨 | ACTk の UX に合わせる |
 
 ---
 
@@ -227,7 +228,8 @@ uSave/
 │   │   ├── SpeedHackDetector.cs
 │   │   ├── TimeCheatingDetector.cs
 │   │   ├── WallHackDetector.cs
-│   │   └── InjectionDetector.cs
+│   │   ├── InjectionDetector.cs
+│   │   └── AntiDebugDetector.cs
 │   ├── ObscuredPrefs.cs
 │   └── ObscuredFilePrefs.cs
 ├── Editor/
@@ -326,6 +328,7 @@ SaveManager.Initialize(new SaveSettings
 | FR-7.1〜7.4 | ACTk ObscuredTypes の OSS 代替 | existing-libraries.md §1.2, §4.6 |
 | FR-7.5〜7.8 | ACTk Detectors の OSS 代替 | existing-libraries.md §1.2, §4.6 |
 | FR-7.9 | ACTk ObscuredPrefs の OSS 代替 | existing-libraries.md §1.2 |
+| FR-7.10 | デバッガ検知によるリバースエンジニアリング対策 | 実装追加（AntiDebugDetector） |
 | NFR-1.5 | ゲームループ内での ObscuredTypes 使用に必要 | security-analysis.md §5 |
 | NFR-1.6 | モジュラー設計によるゼロオーバーヘッド保証 | existing-libraries.md §4.3 |
 | NFR-4.1 | 安全なデフォルトの欠如 | existing-libraries.md §4 |

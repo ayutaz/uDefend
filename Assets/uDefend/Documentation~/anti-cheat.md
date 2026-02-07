@@ -5,7 +5,7 @@
 The anti-cheat module provides:
 
 - **ObscuredTypes** (19 types) — Memory-level protection against value editing
-- **Detectors** (5 types) — Runtime cheat detection
+- **Detectors** (6 types) — Runtime cheat detection
 - **ObscuredPrefs / ObscuredFilePrefs** — Encrypted PlayerPrefs replacement
 
 The module is fully independent from the Runtime module (`uDefend.AntiCheat.asmdef` has no references to `uDefend.Runtime.asmdef`).
@@ -95,6 +95,18 @@ Detects DLL injection by comparing loaded assemblies against a whitelist capture
 ### ObscuredCheatingDetector
 
 Subscribes to all 19 ObscuredType `OnCheatingDetected` events and fires when any type reports tampering.
+
+### AntiDebugDetector
+
+Detects debugging tools and environments that may be used to reverse-engineer or tamper with the game at runtime.
+
+| Property | Default | Description |
+|----------|---------|-------------|
+| Detect Managed Debugger | true | Checks `Debugger.IsAttached` |
+| Detect Debug Environment Variables | true | Checks for `ENABLE_MONO_DEBUG`, `DNSPY_DEBUGGING`, etc. |
+| Detect Suspicious Processes | false | Scans for Cheat Engine, IDA, dnSpy, etc. (Windows only, opt-in) |
+| Detect Breakpoint Timing | true | Detects frame time anomalies caused by breakpoints |
+| Frame Time Threshold | 10s | Seconds before a frame pause triggers detection |
 
 ### Setup
 

@@ -10,7 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - AES-256-CBC + HMAC-SHA256（Encrypt-then-MAC）による認証付き暗号化
 - MessagePack v3 をデフォルトシリアライザとした統合 Save/Load API
 - プラットフォーム固有の鍵管理（Android Keystore / iOS Keychain / Windows DPAPI / PBKDF2 フォールバック）
-- ObscuredTypes（19型）によるメモリ保護 + 5種のチート検知 Detector
+- ObscuredTypes（19型）によるメモリ保護 + 6種のチート検知 Detector
 - バージョン付きセーブファイル形式とマイグレーション機構
 
 対象プラットフォーム: Windows / Android / iOS（macOS / Linux / WebGL はベストエフォート）
@@ -37,7 +37,7 @@ uDefend/
 │   └── Plugins/                # ネイティブプラグイン（Android/iOS/Windows）
 ├── Runtime.AntiCheat/          # uDefend.AntiCheat.asmdef（アンチチート、コアと分離）
 │   ├── ObscuredTypes/          # ObscuredInt, ObscuredFloat 等 19型
-│   ├── Detectors/              # SpeedHack, TimeCheating, WallHack, Injection, ObscuredCheating
+│   ├── Detectors/              # SpeedHack, TimeCheating, WallHack, Injection, ObscuredCheating, AntiDebug
 │   ├── ObscuredPrefs.cs
 │   └── ObscuredFilePrefs.cs
 ├── Editor/                     # uDefend.Editor.asmdef

@@ -9,7 +9,7 @@
 | `uDefend.KeyManagement` | IKeyProvider, IKeyStore, PlatformKeyProvider, Pbkdf2KeyProvider, EnvelopeEncryption |
 | `uDefend.Serialization` | ISerializer, JsonUtilitySerializer, MessagePackSerializerWrapper |
 | `uDefend.Migration` | IMigration, MigrationRunner |
-| `uDefend.AntiCheat` | ObscuredTypes (19), Detectors (5), ObscuredPrefs, ObscuredFilePrefs |
+| `uDefend.AntiCheat` | ObscuredTypes (19), Detectors (6), ObscuredPrefs, ObscuredFilePrefs |
 
 ## Core Classes
 
@@ -139,6 +139,7 @@ void StopDetection()
 - `WallHackDetector` — Sandbox collider + raycast verification
 - `InjectionDetector` — Assembly whitelist comparison
 - `ObscuredCheatingDetector` — Subscribes to all 19 ObscuredType events
+- `AntiDebugDetector` — Detects managed debugger, debug environment variables, suspicious processes, breakpoint timing anomaly
 
 ## AntiCheat — ObscuredPrefs
 

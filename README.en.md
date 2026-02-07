@@ -28,7 +28,7 @@ uDefend is a Unity package that encrypts game save data with AES-256 and protect
 
 ### Anti-Cheat (Independent Module)
 - **ObscuredTypes (19 types)**: Memory-protected versions of int, float, string, Vector3, etc.
-- **Detectors (5 types)**: SpeedHack, TimeCheating, WallHack, Injection, ObscuredCheating
+- **Detectors (6 types)**: SpeedHack, TimeCheating, WallHack, Injection, ObscuredCheating, AntiDebug
 - **ObscuredPrefs / ObscuredFilePrefs**: Encrypted PlayerPrefs alternative
 - Custom PropertyDrawer for all 19 types in the Inspector
 
@@ -99,11 +99,11 @@ Assets/uDefend/
 │   └── Plugins/                # Native plugins (Android/iOS/Windows)
 ├── Runtime.AntiCheat/          # Independent module: ObscuredTypes, Detectors, Prefs
 │   ├── ObscuredTypes/          # 19 types (Int, Float, Vector3, Quaternion, etc.)
-│   ├── Detectors/              # 5 types (SpeedHack, WallHack, etc.)
+│   ├── Detectors/              # 6 types (SpeedHack, WallHack, AntiDebug, etc.)
 │   ├── ObscuredPrefs.cs
 │   └── ObscuredFilePrefs.cs
 ├── Editor/                     # PropertyDrawer (19 types), EditorWindow (2 types)
-├── Tests/                      # 160+ unit tests
+├── Tests/                      # 170+ unit tests
 ├── Samples~/                   # 4 samples
 └── Documentation~/             # Documentation
 ```
@@ -148,9 +148,9 @@ Import from Unity Package Manager > uDefend > Samples:
 
 ## Tests
 
-160+ unit tests covering all modules:
+170+ unit tests covering all modules:
 - ObscuredTypes (52+ tests / all 19 types)
-- Detectors (22 tests / all 5 types + DetectorBase)
+- Detectors (29 tests / all 6 types + DetectorBase)
 - Encryption, key management, migration, serialization
 
 ## License

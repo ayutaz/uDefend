@@ -21,7 +21,7 @@ uDefend provides enterprise-grade security for your Unity game's save data and r
 
 ### Anti-Cheat (Independent Module)
 - **19 ObscuredTypes**: Memory-protected replacements for int, float, string, Vector3, etc.
-- **5 Detectors**: SpeedHack, TimeCheating, WallHack, Injection, ObscuredCheating
+- **6 Detectors**: SpeedHack, TimeCheating, WallHack, Injection, ObscuredCheating, AntiDebug
 - **ObscuredPrefs**: Encrypted PlayerPrefs replacement
 - Inspector support with custom PropertyDrawers for all 19 types
 
@@ -94,7 +94,7 @@ uDefend/
 ├── Runtime/           # Core: Save/Load, Encryption, Keys, Migration
 ├── Runtime.AntiCheat/ # Independent: ObscuredTypes, Detectors, Prefs
 ├── Editor/            # PropertyDrawers, EditorWindows
-└── Tests/             # 137+ unit tests
+└── Tests/             # 170+ unit tests
 ```
 
 The AntiCheat module has **zero dependency** on the Runtime module — use either independently.

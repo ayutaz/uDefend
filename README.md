@@ -28,7 +28,7 @@ uDefend は、ゲームのセーブデータを AES-256 で暗号化し、メモ
 
 ### アンチチート（独立モジュール）
 - **ObscuredTypes（19型）**: int, float, string, Vector3 等のメモリ保護版
-- **Detectors（5種）**: SpeedHack, TimeCheating, WallHack, Injection, ObscuredCheating
+- **Detectors（6種）**: SpeedHack, TimeCheating, WallHack, Injection, ObscuredCheating, AntiDebug
 - **ObscuredPrefs / ObscuredFilePrefs**: 暗号化された PlayerPrefs 代替
 - 全19型の Inspector 用カスタム PropertyDrawer
 
@@ -99,11 +99,11 @@ Assets/uDefend/
 │   └── Plugins/                # ネイティブプラグイン (Android/iOS/Windows)
 ├── Runtime.AntiCheat/          # 独立モジュール: ObscuredTypes, Detectors, Prefs
 │   ├── ObscuredTypes/          # 19型 (Int, Float, Vector3, Quaternion 等)
-│   ├── Detectors/              # 5種 (SpeedHack, WallHack 等)
+│   ├── Detectors/              # 6種 (SpeedHack, WallHack, AntiDebug 等)
 │   ├── ObscuredPrefs.cs
 │   └── ObscuredFilePrefs.cs
 ├── Editor/                     # PropertyDrawer (19型), EditorWindow (2種)
-├── Tests/                      # 160+ ユニットテスト
+├── Tests/                      # 170+ ユニットテスト
 ├── Samples~/                   # 4サンプル
 └── Documentation~/             # ドキュメント
 ```
@@ -148,9 +148,9 @@ Unity Package Manager > uDefend > Samples からインポート:
 
 ## テスト
 
-160+ ユニットテストで全モジュールをカバー:
+170+ ユニットテストで全モジュールをカバー:
 - ObscuredTypes (52+ tests / 全19型)
-- Detectors (22 tests / 全5種 + DetectorBase)
+- Detectors (29 tests / 全6種 + DetectorBase)
 - 暗号化, 鍵管理, マイグレーション, シリアライズ
 
 ## ライセンス

@@ -66,7 +66,7 @@ private ObscuredInt health = 100;
 Add Detectors to your scene for runtime cheat detection:
 
 1. Create an empty GameObject
-2. Add `SpeedHackDetector`, `ObscuredCheatingDetector`, etc.
+2. Add `SpeedHackDetector`, `ObscuredCheatingDetector`, `AntiDebugDetector`, etc.
 3. Configure callbacks in the Inspector
 
 ## Architecture
