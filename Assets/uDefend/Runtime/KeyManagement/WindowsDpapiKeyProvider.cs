@@ -3,21 +3,116 @@ using uDefend.Encryption;
 
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
 using System.IO;
-using System.Security.Cryptography;
+using System.Runtime.InteropServices;
 #endif
 
 namespace uDefend.KeyManagement
 {
     /// <summary>
-    /// Key provider using Windows DPAPI (Data Protection API).
+    /// Key provider using Windows DPAPI (Data Protection API) via P/Invoke.
     /// Keys are protected with the current user's credentials and stored on disk.
-    /// Falls back to PBKDF2 on non-Windows platforms.
     /// </summary>
     public sealed class WindowsDpapiKeyProvider : IKeyStore, IDisposable
     {
         private readonly string _keyFilePath;
         private byte[] _cachedKey;
         private bool _disposed;
+
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+        [StructLayout(LayoutKind.Sequential)]
+        private struct DATA_BLOB
+        {
+            public int cbData;
+            public IntPtr pbData;
+        }
+
+        [DllImport("crypt32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern bool CryptProtectData(
+            ref DATA_BLOB pDataIn,
+            string szDataDescr,
+            IntPtr pOptionalEntropy,
+            IntPtr pvReserved,
+            IntPtr pPromptStruct,
+            int dwFlags,
+            ref DATA_BLOB pDataOut);
+
+        [DllImport("crypt32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern bool CryptUnprotectData(
+            ref DATA_BLOB pDataIn,
+            IntPtr ppszDataDescr,
+            IntPtr pOptionalEntropy,
+            IntPtr pvReserved,
+            IntPtr pPromptStruct,
+            int dwFlags,
+            ref DATA_BLOB pDataOut);
+
+        [DllImport("kernel32.dll")]
+        private static extern IntPtr LocalFree(IntPtr hMem);
+
+        private const int CRYPTPROTECT_UI_FORBIDDEN = 0x1;
+
+        private static byte[] Protect(byte[] data)
+        {
+            var dataIn = new DATA_BLOB();
+            var dataOut = new DATA_BLOB();
+            IntPtr pinned = IntPtr.Zero;
+
+            try
+            {
+                pinned = Marshal.AllocHGlobal(data.Length);
+                Marshal.Copy(data, 0, pinned, data.Length);
+                dataIn.cbData = data.Length;
+                dataIn.pbData = pinned;
+
+                if (!CryptProtectData(ref dataIn, null, IntPtr.Zero, IntPtr.Zero,
+                        IntPtr.Zero, CRYPTPROTECT_UI_FORBIDDEN, ref dataOut))
+                {
+                    throw new InvalidOperationException(
+                        $"CryptProtectData failed (error code: {Marshal.GetLastWin32Error()}).");
+                }
+
+                var result = new byte[dataOut.cbData];
+                Marshal.Copy(dataOut.pbData, result, 0, dataOut.cbData);
+                return result;
+            }
+            finally
+            {
+                if (pinned != IntPtr.Zero) Marshal.FreeHGlobal(pinned);
+                if (dataOut.pbData != IntPtr.Zero) LocalFree(dataOut.pbData);
+            }
+        }
+
+        private static byte[] Unprotect(byte[] data)
+        {
+            var dataIn = new DATA_BLOB();
+            var dataOut = new DATA_BLOB();
+            IntPtr pinned = IntPtr.Zero;
+
+            try
+            {
+                pinned = Marshal.AllocHGlobal(data.Length);
+                Marshal.Copy(data, 0, pinned, data.Length);
+                dataIn.cbData = data.Length;
+                dataIn.pbData = pinned;
+
+                if (!CryptUnprotectData(ref dataIn, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero,
+                        IntPtr.Zero, CRYPTPROTECT_UI_FORBIDDEN, ref dataOut))
+                {
+                    throw new InvalidOperationException(
+                        $"CryptUnprotectData failed (error code: {Marshal.GetLastWin32Error()}).");
+                }
+
+                var result = new byte[dataOut.cbData];
+                Marshal.Copy(dataOut.pbData, result, 0, dataOut.cbData);
+                return result;
+            }
+            finally
+            {
+                if (pinned != IntPtr.Zero) Marshal.FreeHGlobal(pinned);
+                if (dataOut.pbData != IntPtr.Zero) LocalFree(dataOut.pbData);
+            }
+        }
+#endif
 
         public WindowsDpapiKeyProvider(string keyIdentifier)
         {
@@ -46,7 +141,7 @@ namespace uDefend.KeyManagement
             if (_keyFilePath != null && File.Exists(_keyFilePath))
             {
                 byte[] protectedData = File.ReadAllBytes(_keyFilePath);
-                _cachedKey = ProtectedData.Unprotect(protectedData, null, DataProtectionScope.CurrentUser);
+                _cachedKey = Unprotect(protectedData);
                 return CopyKey(_cachedKey);
             }
 
@@ -112,7 +207,7 @@ namespace uDefend.KeyManagement
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
             if (_keyFilePath != null)
             {
-                byte[] protectedData = ProtectedData.Protect(key, null, DataProtectionScope.CurrentUser);
+                byte[] protectedData = Protect(key);
                 File.WriteAllBytes(_keyFilePath, protectedData);
             }
 #endif
