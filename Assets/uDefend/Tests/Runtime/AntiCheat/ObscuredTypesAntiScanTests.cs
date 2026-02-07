@@ -10,14 +10,17 @@ namespace uDefend.Tests.AntiCheat
     public class ObscuredTypesAntiScanTests
     {
         [Test]
-        public void ObscuredInt_FakeValue_SetToPlaintext()
+        public void ObscuredInt_FakeValue_IsObfuscated()
         {
             ObscuredInt obscured = 42;
 
             object boxed = obscured;
             int fakeValue = (int)GetField(boxed, "_fakeValue");
+            int decoyKey = (int)GetField(boxed, "_decoyKey");
 
-            Assert.AreEqual(42, fakeValue, "Fake value should contain the plaintext value.");
+            // After anti-scan hardening, _fakeValue stores value ^ _decoyKey (not plaintext)
+            Assert.AreEqual(42, fakeValue ^ decoyKey, "Fake value XOR decoyKey should equal the plaintext value.");
+            Assert.AreNotEqual(42, fakeValue, "Fake value should NOT be the raw plaintext (anti-scan hardening).");
         }
 
         [Test]
@@ -79,8 +82,9 @@ namespace uDefend.Tests.AntiCheat
             {
                 ObscuredFloat obscured = 3.14f;
 
+                // After anti-scan hardening, _fakeValue is int (bit-converted float XOR decoyKey)
                 object boxed = obscured;
-                SetField(ref boxed, "_fakeValue", 999.0f);
+                SetField(ref boxed, "_fakeValue", 999);
                 obscured = (ObscuredFloat)boxed;
 
                 float _ = obscured;
@@ -104,8 +108,9 @@ namespace uDefend.Tests.AntiCheat
             {
                 ObscuredVector3 obscured = new Vector3(1f, 2f, 3f);
 
+                // After anti-scan hardening, _fakeX is int (bit-converted float XOR decoyKey)
                 object boxed = obscured;
-                SetField(ref boxed, "_fakeX", 999.0f);
+                SetField(ref boxed, "_fakeX", 999);
                 obscured = (ObscuredVector3)boxed;
 
                 Vector3 _ = obscured;
@@ -119,7 +124,7 @@ namespace uDefend.Tests.AntiCheat
         }
 
         [Test]
-        public void ObscuredString_FakeValueTampered_DetectsCheating()
+        public void ObscuredString_FakeHashTampered_DetectsCheating()
         {
             bool cheatingDetected = false;
             Action handler = () => cheatingDetected = true;
@@ -129,13 +134,14 @@ namespace uDefend.Tests.AntiCheat
             {
                 ObscuredString obscured = "Hello";
 
+                // After anti-scan hardening, _fakeHash is int (checksum XOR decoyKey)
                 object boxed = obscured;
-                SetField(ref boxed, "_fakeValue", "Hacked");
+                SetField(ref boxed, "_fakeHash", 999);
                 obscured = (ObscuredString)boxed;
 
                 string _ = obscured;
 
-                Assert.IsTrue(cheatingDetected, "Tampering with string _fakeValue should trigger cheating detection.");
+                Assert.IsTrue(cheatingDetected, "Tampering with string _fakeHash should trigger cheating detection.");
             }
             finally
             {
