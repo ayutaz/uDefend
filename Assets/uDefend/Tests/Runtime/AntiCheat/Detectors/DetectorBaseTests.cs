@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Reflection;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -110,6 +111,39 @@ namespace uDefend.Tests.AntiCheat.Detectors
 
             // After destruction, the detector object is null/destroyed
             Assert.IsTrue(detector == null, "Detector should be destroyed.");
+        }
+
+        [UnityTest]
+        public IEnumerator StopDetection_CalledTwice_NoException()
+        {
+            _go = new GameObject("DetectorBaseTest");
+            var detector = _go.AddComponent<SpeedHackDetector>();
+
+            yield return null;
+            Assert.IsTrue(detector.IsRunning);
+
+            detector.StopDetection();
+            Assert.IsFalse(detector.IsRunning);
+
+            // Second call should not throw
+            Assert.DoesNotThrow(() => detector.StopDetection());
+            Assert.IsFalse(detector.IsRunning, "IsRunning should remain false after double stop.");
+        }
+
+        [UnityTest]
+        public IEnumerator AutoStart_Disabled_DoesNotStartDetection()
+        {
+            _go = new GameObject("DetectorBaseTest_AutoStartDisabled");
+            // AddComponent schedules Start() for next frame, so we can set _autoStart before it runs
+            var detector = _go.AddComponent<SpeedHackDetector>();
+
+            var autoStartField = typeof(DetectorBase).GetField("_autoStart", BindingFlags.NonPublic | BindingFlags.Instance);
+            autoStartField.SetValue(detector, false);
+
+            // Wait for Start() to execute — it should see _autoStart=false
+            yield return null;
+
+            Assert.IsFalse(detector.IsRunning, "Detector should not auto-start when _autoStart is false.");
         }
     }
 }
