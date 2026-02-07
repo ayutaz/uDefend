@@ -80,6 +80,12 @@ All detectors inherit from `DetectorBase` and share common settings:
 
 Detects speed manipulation tools (e.g., Cheat Engine speedhack) by comparing `System.Diagnostics.Stopwatch` against `Time.realtimeSinceStartup`.
 
+| Property | Default | Description |
+|----------|---------|-------------|
+| Max Time Difference Threshold | 1.0s | Wall-clock vs Unity-clock 最大許容差 |
+| Detect TimeScale Manipulation | true | Time.timeScale の異常検知を有効化 |
+| Max Allowed TimeScale | 3.0 | 検知を発火する timeScale 閾値（厳密に超えた場合のみ） |
+
 ### TimeCheatingDetector
 
 Detects system clock manipulation (regression or large jumps in `DateTime.UtcNow`).

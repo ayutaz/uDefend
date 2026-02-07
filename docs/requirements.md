@@ -1,8 +1,8 @@
-# uSave 要件定義
+# uDefend 要件定義
 
 ## 概要
 
-本文書は `docs/research/` 配下の調査結果から導出した、Unity 向けセーブデータ暗号化ライブラリ **uSave** の要件定義である。
+本文書は `docs/research/` 配下の調査結果から導出した、Unity 向けセーブデータ暗号化ライブラリ **uDefend** の要件定義である。
 
 **対象プラットフォーム:** Windows / Android / iOS
 
@@ -168,13 +168,13 @@
 ## 3. 推奨プロジェクト構成案
 
 ```
-uSave/
+uDefend/
 ├── package.json                      # UPM パッケージ定義
 ├── README.md
 ├── LICENSE                           # MIT License
 ├── CHANGELOG.md
 ├── Runtime/
-│   ├── uSave.Runtime.asmdef
+│   ├── uDefend.Runtime.asmdef
 │   ├── Core/
 │   │   ├── SaveManager.cs            # メインエントリポイント（Save/Load API）
 │   │   ├── SaveFile.cs               # セーブファイルの読み書き（ヘッダ・ペイロード管理）
@@ -202,7 +202,7 @@ uSave/
 │       ├── iOS/                       # iOS Keychain ネイティブプラグイン
 │       └── Windows/                   # DPAPI ラッパー
 ├── Runtime.AntiCheat/                 # ★ アンチチートモジュール（asmdef 分離）
-│   ├── uSave.AntiCheat.asmdef
+│   ├── uDefend.AntiCheat.asmdef
 │   ├── ObscuredTypes/
 │   │   ├── ObscuredBool.cs
 │   │   ├── ObscuredByte.cs
@@ -233,7 +233,7 @@ uSave/
 │   ├── ObscuredPrefs.cs
 │   └── ObscuredFilePrefs.cs
 ├── Editor/
-│   ├── uSave.Editor.asmdef
+│   ├── uDefend.Editor.asmdef
 │   ├── SaveDataEditorWindow.cs        # セーブデータ閲覧・編集ウィンドウ
 │   ├── SaveSettingsEditor.cs          # 設定カスタムインスペクタ
 │   ├── ObscuredPrefsEditorWindow.cs   # ★ ObscuredPrefs 閲覧・編集
@@ -243,7 +243,7 @@ uSave/
 │       └── ...
 ├── Tests/
 │   ├── Runtime/
-│   │   ├── uSave.Tests.Runtime.asmdef
+│   │   ├── uDefend.Tests.Runtime.asmdef
 │   │   ├── EncryptionTests.cs
 │   │   ├── SerializationTests.cs
 │   │   ├── KeyManagementTests.cs
@@ -253,7 +253,7 @@ uSave/
 │   │       ├── ObscuredTypesTests.cs
 │   │       └── DetectorTests.cs
 │   └── Editor/
-│       ├── uSave.Tests.Editor.asmdef
+│       ├── uDefend.Tests.Editor.asmdef
 │       └── EditorToolTests.cs
 ├── Samples~/
 │   ├── BasicUsage/                    # 基本的なセーブ・ロード

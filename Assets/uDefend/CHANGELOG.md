@@ -40,7 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `ObscuredPrefs` (encrypted PlayerPrefs wrapper)
 - `ObscuredFilePrefs` (file-based encrypted preferences)
 - `DetectorBase` abstract MonoBehaviour with configurable periodic checking
-- `SpeedHackDetector`, `TimeCheatingDetector`, `WallHackDetector`, `InjectionDetector`, `ObscuredCheatingDetector`
+- `SpeedHackDetector`, `TimeCheatingDetector`, `WallHackDetector`, `InjectionDetector`, `ObscuredCheatingDetector`, `AntiDebugDetector`
 
 #### Editor (M8)
 - Custom PropertyDrawers for all 19 ObscuredTypes
@@ -54,6 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - README, CHANGELOG, LICENSE
 
 #### Testing
-- 137+ unit tests covering all modules
-- ObscuredTypes tests (52+ tests for all 19 types)
+- 190+ unit tests covering all modules
+- ObscuredTypes tests (59+ tests for all 19 types)
+- Detectors tests (35 tests for all 6 types + DetectorBase)
 - Encryption, key management, migration, serialization tests

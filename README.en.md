@@ -103,7 +103,7 @@ Assets/uDefend/
 │   ├── ObscuredPrefs.cs
 │   └── ObscuredFilePrefs.cs
 ├── Editor/                     # PropertyDrawer (19 types), EditorWindow (2 types)
-├── Tests/                      # 170+ unit tests
+├── Tests/                      # 190+ unit tests
 ├── Samples~/                   # 4 samples
 └── Documentation~/             # Documentation
 ```
@@ -148,9 +148,9 @@ Import from Unity Package Manager > uDefend > Samples:
 
 ## Tests
 
-170+ unit tests covering all modules:
-- ObscuredTypes (52+ tests / all 19 types)
-- Detectors (29 tests / all 6 types + DetectorBase)
+190+ unit tests covering all modules:
+- ObscuredTypes (59+ tests / all 19 types)
+- Detectors (35 tests / all 6 types + DetectorBase)
 - Encryption, key management, migration, serialization
 
 ## License

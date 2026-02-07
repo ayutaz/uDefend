@@ -103,7 +103,7 @@ Assets/uDefend/
 │   ├── ObscuredPrefs.cs
 │   └── ObscuredFilePrefs.cs
 ├── Editor/                     # PropertyDrawer (19型), EditorWindow (2種)
-├── Tests/                      # 170+ ユニットテスト
+├── Tests/                      # 190+ ユニットテスト
 ├── Samples~/                   # 4サンプル
 └── Documentation~/             # ドキュメント
 ```
@@ -148,9 +148,9 @@ Unity Package Manager > uDefend > Samples からインポート:
 
 ## テスト
 
-170+ ユニットテストで全モジュールをカバー:
-- ObscuredTypes (52+ tests / 全19型)
-- Detectors (29 tests / 全6種 + DetectorBase)
+190+ ユニットテストで全モジュールをカバー:
+- ObscuredTypes (59+ tests / 全19型)
+- Detectors (35 tests / 全6種 + DetectorBase)
 - 暗号化, 鍵管理, マイグレーション, シリアライズ
 
 ## ライセンス
