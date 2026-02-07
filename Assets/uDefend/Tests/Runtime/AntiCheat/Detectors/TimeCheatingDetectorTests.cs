@@ -28,8 +28,7 @@ namespace uDefend.Tests.AntiCheat.Detectors
             var detector = _go.AddComponent<TimeCheatingDetector>();
 
             bool cheatingDetected = false;
-            detector.OnCheatingDetected = new UnityEngine.Events.UnityEvent();
-            detector.OnCheatingDetected.AddListener(() => cheatingDetected = true);
+            detector.AddCheatingDetectedListener(() => cheatingDetected = true);
 
             yield return null;
             Assert.IsTrue(detector.IsRunning);
@@ -48,8 +47,7 @@ namespace uDefend.Tests.AntiCheat.Detectors
             var detector = _go.AddComponent<TimeCheatingDetector>();
 
             int callCount = 0;
-            detector.OnCheatingDetected = new UnityEngine.Events.UnityEvent();
-            detector.OnCheatingDetected.AddListener(() => callCount++);
+            detector.AddCheatingDetectedListener(() => callCount++);
 
             yield return null;
 
@@ -64,8 +62,7 @@ namespace uDefend.Tests.AntiCheat.Detectors
             var detector = _go.AddComponent<TimeCheatingDetector>();
 
             bool cheatingDetected = false;
-            detector.OnCheatingDetected = new UnityEngine.Events.UnityEvent();
-            detector.OnCheatingDetected.AddListener(() => cheatingDetected = true);
+            detector.AddCheatingDetectedListener(() => cheatingDetected = true);
 
             yield return null;
             Assert.IsTrue(detector.IsRunning);

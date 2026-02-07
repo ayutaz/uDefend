@@ -17,9 +17,10 @@ namespace uDefend.AntiCheat
         [SerializeField] private int _keyY;
         [SerializeField] private int _keyZ;
         [SerializeField] private int _checksum;
-        [SerializeField] private float _fakeX;
-        [SerializeField] private float _fakeY;
-        [SerializeField] private float _fakeZ;
+        [SerializeField] private int _fakeX;
+        [SerializeField] private int _fakeY;
+        [SerializeField] private int _fakeZ;
+        [SerializeField] private int _decoyKey;
 
         private ObscuredVector3(Vector3 value)
         {
@@ -33,9 +34,10 @@ namespace uDefend.AntiCheat
             _encryptedY = bitsY ^ _keyY;
             _encryptedZ = bitsZ ^ _keyZ;
             _checksum = bitsX ^ bitsY ^ bitsZ ^ ChecksumSalt;
-            _fakeX = value.x;
-            _fakeY = value.y;
-            _fakeZ = value.z;
+            _decoyKey = ObscuredRandom.Next();
+            _fakeX = bitsX ^ _decoyKey;
+            _fakeY = bitsY ^ _decoyKey;
+            _fakeZ = bitsZ ^ _decoyKey;
         }
 
         private bool IsDefault() =>
@@ -52,9 +54,9 @@ namespace uDefend.AntiCheat
             int bitsZ = _encryptedZ ^ _keyZ;
 
             bool checksumFailed = (bitsX ^ bitsY ^ bitsZ ^ ChecksumSalt) != _checksum;
-            bool decoyTampered = BitConverter.SingleToInt32Bits(_fakeX) != bitsX
-                              || BitConverter.SingleToInt32Bits(_fakeY) != bitsY
-                              || BitConverter.SingleToInt32Bits(_fakeZ) != bitsZ;
+            bool decoyTampered = (_fakeX ^ _decoyKey) != bitsX
+                              || (_fakeY ^ _decoyKey) != bitsY
+                              || (_fakeZ ^ _decoyKey) != bitsZ;
 
             if (checksumFailed || decoyTampered)
             {
@@ -89,9 +91,10 @@ namespace uDefend.AntiCheat
             _encryptedY = bitsY ^ _keyY;
             _encryptedZ = bitsZ ^ _keyZ;
             _checksum = bitsX ^ bitsY ^ bitsZ ^ ChecksumSalt;
-            _fakeX = value.x;
-            _fakeY = value.y;
-            _fakeZ = value.z;
+            _decoyKey = ObscuredRandom.Next();
+            _fakeX = bitsX ^ _decoyKey;
+            _fakeY = bitsY ^ _decoyKey;
+            _fakeZ = bitsZ ^ _decoyKey;
         }
 
         // Implicit conversions

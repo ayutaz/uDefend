@@ -30,7 +30,7 @@ namespace uDefend.KeyManagement
         private static extern bool CryptProtectData(
             ref DATA_BLOB pDataIn,
             string szDataDescr,
-            IntPtr pOptionalEntropy,
+            ref DATA_BLOB pOptionalEntropy,
             IntPtr pvReserved,
             IntPtr pPromptStruct,
             int dwFlags,
@@ -40,7 +40,7 @@ namespace uDefend.KeyManagement
         private static extern bool CryptUnprotectData(
             ref DATA_BLOB pDataIn,
             IntPtr ppszDataDescr,
-            IntPtr pOptionalEntropy,
+            ref DATA_BLOB pOptionalEntropy,
             IntPtr pvReserved,
             IntPtr pPromptStruct,
             int dwFlags,
@@ -51,11 +51,23 @@ namespace uDefend.KeyManagement
 
         private const int CRYPTPROTECT_UI_FORBIDDEN = 0x1;
 
+        private static readonly byte[] AppEntropy = ComputeAppEntropy();
+
+        private static byte[] ComputeAppEntropy()
+        {
+            using (var sha = System.Security.Cryptography.SHA256.Create())
+            {
+                return sha.ComputeHash(System.Text.Encoding.UTF8.GetBytes("uDefend_" + UnityEngine.Application.identifier));
+            }
+        }
+
         private static byte[] Protect(byte[] data)
         {
             var dataIn = new DATA_BLOB();
             var dataOut = new DATA_BLOB();
+            var entropyBlob = new DATA_BLOB();
             IntPtr pinned = IntPtr.Zero;
+            IntPtr entropyPtr = IntPtr.Zero;
 
             try
             {
@@ -64,7 +76,12 @@ namespace uDefend.KeyManagement
                 dataIn.cbData = data.Length;
                 dataIn.pbData = pinned;
 
-                if (!CryptProtectData(ref dataIn, null, IntPtr.Zero, IntPtr.Zero,
+                entropyPtr = Marshal.AllocHGlobal(AppEntropy.Length);
+                Marshal.Copy(AppEntropy, 0, entropyPtr, AppEntropy.Length);
+                entropyBlob.cbData = AppEntropy.Length;
+                entropyBlob.pbData = entropyPtr;
+
+                if (!CryptProtectData(ref dataIn, null, ref entropyBlob, IntPtr.Zero,
                         IntPtr.Zero, CRYPTPROTECT_UI_FORBIDDEN, ref dataOut))
                 {
                     throw new InvalidOperationException(
@@ -78,6 +95,7 @@ namespace uDefend.KeyManagement
             finally
             {
                 if (pinned != IntPtr.Zero) Marshal.FreeHGlobal(pinned);
+                if (entropyPtr != IntPtr.Zero) Marshal.FreeHGlobal(entropyPtr);
                 if (dataOut.pbData != IntPtr.Zero) LocalFree(dataOut.pbData);
             }
         }
@@ -86,7 +104,9 @@ namespace uDefend.KeyManagement
         {
             var dataIn = new DATA_BLOB();
             var dataOut = new DATA_BLOB();
+            var entropyBlob = new DATA_BLOB();
             IntPtr pinned = IntPtr.Zero;
+            IntPtr entropyPtr = IntPtr.Zero;
 
             try
             {
@@ -95,7 +115,12 @@ namespace uDefend.KeyManagement
                 dataIn.cbData = data.Length;
                 dataIn.pbData = pinned;
 
-                if (!CryptUnprotectData(ref dataIn, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero,
+                entropyPtr = Marshal.AllocHGlobal(AppEntropy.Length);
+                Marshal.Copy(AppEntropy, 0, entropyPtr, AppEntropy.Length);
+                entropyBlob.cbData = AppEntropy.Length;
+                entropyBlob.pbData = entropyPtr;
+
+                if (!CryptUnprotectData(ref dataIn, IntPtr.Zero, ref entropyBlob, IntPtr.Zero,
                         IntPtr.Zero, CRYPTPROTECT_UI_FORBIDDEN, ref dataOut))
                 {
                     throw new InvalidOperationException(
@@ -109,6 +134,7 @@ namespace uDefend.KeyManagement
             finally
             {
                 if (pinned != IntPtr.Zero) Marshal.FreeHGlobal(pinned);
+                if (entropyPtr != IntPtr.Zero) Marshal.FreeHGlobal(entropyPtr);
                 if (dataOut.pbData != IntPtr.Zero) LocalFree(dataOut.pbData);
             }
         }

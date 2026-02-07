@@ -19,10 +19,11 @@ namespace uDefend.AntiCheat
         [SerializeField] private int _keyZ;
         [SerializeField] private int _keyW;
         [SerializeField] private int _checksum;
-        [SerializeField] private float _fakeX;
-        [SerializeField] private float _fakeY;
-        [SerializeField] private float _fakeZ;
-        [SerializeField] private float _fakeW;
+        [SerializeField] private int _fakeX;
+        [SerializeField] private int _fakeY;
+        [SerializeField] private int _fakeZ;
+        [SerializeField] private int _fakeW;
+        [SerializeField] private int _decoyKey;
 
         private ObscuredQuaternion(Quaternion value)
         {
@@ -39,10 +40,11 @@ namespace uDefend.AntiCheat
             _encryptedZ = bitsZ ^ _keyZ;
             _encryptedW = bitsW ^ _keyW;
             _checksum = bitsX ^ bitsY ^ bitsZ ^ bitsW ^ ChecksumSalt;
-            _fakeX = value.x;
-            _fakeY = value.y;
-            _fakeZ = value.z;
-            _fakeW = value.w;
+            _decoyKey = ObscuredRandom.Next();
+            _fakeX = bitsX ^ _decoyKey;
+            _fakeY = bitsY ^ _decoyKey;
+            _fakeZ = bitsZ ^ _decoyKey;
+            _fakeW = bitsW ^ _decoyKey;
         }
 
         private bool IsDefault() =>
@@ -60,10 +62,10 @@ namespace uDefend.AntiCheat
             int bitsW = _encryptedW ^ _keyW;
 
             bool checksumFailed = (bitsX ^ bitsY ^ bitsZ ^ bitsW ^ ChecksumSalt) != _checksum;
-            bool decoyTampered = BitConverter.SingleToInt32Bits(_fakeX) != bitsX
-                              || BitConverter.SingleToInt32Bits(_fakeY) != bitsY
-                              || BitConverter.SingleToInt32Bits(_fakeZ) != bitsZ
-                              || BitConverter.SingleToInt32Bits(_fakeW) != bitsW;
+            bool decoyTampered = (_fakeX ^ _decoyKey) != bitsX
+                              || (_fakeY ^ _decoyKey) != bitsY
+                              || (_fakeZ ^ _decoyKey) != bitsZ
+                              || (_fakeW ^ _decoyKey) != bitsW;
 
             if (checksumFailed || decoyTampered)
             {
@@ -105,10 +107,11 @@ namespace uDefend.AntiCheat
             _encryptedZ = bitsZ ^ _keyZ;
             _encryptedW = bitsW ^ _keyW;
             _checksum = bitsX ^ bitsY ^ bitsZ ^ bitsW ^ ChecksumSalt;
-            _fakeX = value.x;
-            _fakeY = value.y;
-            _fakeZ = value.z;
-            _fakeW = value.w;
+            _decoyKey = ObscuredRandom.Next();
+            _fakeX = bitsX ^ _decoyKey;
+            _fakeY = bitsY ^ _decoyKey;
+            _fakeZ = bitsZ ^ _decoyKey;
+            _fakeW = bitsW ^ _decoyKey;
         }
 
         // Implicit conversions

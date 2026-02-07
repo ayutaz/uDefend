@@ -60,10 +60,10 @@ namespace uDefend.AntiCheat
             DestroySandbox();
 
             // --- Wall (collider) ---
-            _wallObject = new GameObject("__uDefend_WH_Wall")
+            _wallObject = new GameObject("__" + Random.Range(100000, 999999))
             {
                 layer = _detectionLayer,
-                hideFlags = HideFlags.HideAndDontSave
+                hideFlags = HideFlags.HideInHierarchy | HideFlags.HideInInspector | HideFlags.DontSave | HideFlags.NotEditable
             };
             _wallObject.transform.position = transform.position + _sandboxOffset;
 
@@ -71,10 +71,10 @@ namespace uDefend.AntiCheat
             boxCollider.size = new Vector3(10f, 10f, 1f);
 
             // --- Probe (the "player" behind the wall) ---
-            _probeObject = new GameObject("__uDefend_WH_Probe")
+            _probeObject = new GameObject("__" + Random.Range(100000, 999999))
             {
                 layer = _detectionLayer,
-                hideFlags = HideFlags.HideAndDontSave
+                hideFlags = HideFlags.HideInHierarchy | HideFlags.HideInInspector | HideFlags.DontSave | HideFlags.NotEditable
             };
             _probeObject.transform.position = _wallObject.transform.position + new Vector3(0f, 0f, -5f);
 

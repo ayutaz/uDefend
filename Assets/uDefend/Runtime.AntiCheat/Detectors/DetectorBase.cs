@@ -20,12 +20,22 @@ namespace uDefend.AntiCheat
         [SerializeField] private bool _dontDestroyOnLoad = true;
 
         [Tooltip("Invoked when cheating is detected. Configure callbacks in the Inspector or via code.")]
-        public UnityEvent OnCheatingDetected;
+        [SerializeField] private UnityEvent _onCheatingDetected = new UnityEvent();
 
         /// <summary>
         /// Whether the detector is currently running periodic checks.
         /// </summary>
         public bool IsRunning { get; private set; }
+
+        /// <summary>
+        /// Register a listener to be invoked when cheating is detected.
+        /// </summary>
+        public void AddCheatingDetectedListener(UnityAction listener) => _onCheatingDetected.AddListener(listener);
+
+        /// <summary>
+        /// Unregister a previously registered cheating detection listener.
+        /// </summary>
+        public void RemoveCheatingDetectedListener(UnityAction listener) => _onCheatingDetected.RemoveListener(listener);
 
         protected virtual void Start()
         {
@@ -55,7 +65,7 @@ namespace uDefend.AntiCheat
         /// <summary>
         /// Stop periodic cheat detection.
         /// </summary>
-        public void StopDetection()
+        internal void StopDetection()
         {
             if (!IsRunning) return;
 
@@ -78,7 +88,7 @@ namespace uDefend.AntiCheat
         {
             if (CheckForCheat())
             {
-                OnCheatingDetected?.Invoke();
+                _onCheatingDetected?.Invoke();
                 StopDetection();
             }
         }

@@ -31,13 +31,13 @@ namespace uDefend.Tests.AntiCheat.Detectors
             // Wait for Start() and OnDetectionStarted() to create sandbox
             yield return null;
 
-            // Sandbox objects use HideFlags.HideAndDontSave, so GameObject.Find won't work.
-            // Use Resources.FindObjectsOfTypeAll to find them.
+            // Sandbox objects use strong HideFlags, so GameObject.Find won't work.
+            // Use Resources.FindObjectsOfTypeAll and filter by layer 31.
             var allColliders = Resources.FindObjectsOfTypeAll<BoxCollider>();
-            bool wallExists = allColliders.Any(c => c.gameObject.name == "__uDefend_WH_Wall");
+            bool wallExists = allColliders.Any(c => c.gameObject.layer == 31 && c.gameObject.name.StartsWith("__"));
 
             var allRigidbodies = Resources.FindObjectsOfTypeAll<Rigidbody>();
-            bool probeExists = allRigidbodies.Any(r => r.gameObject.name == "__uDefend_WH_Probe");
+            bool probeExists = allRigidbodies.Any(r => r.gameObject.layer == 31 && r.gameObject.name.StartsWith("__"));
 
             Assert.IsTrue(wallExists, "Wall sandbox object should exist after detection starts.");
             Assert.IsTrue(probeExists, "Probe sandbox object should exist after detection starts.");
@@ -50,8 +50,7 @@ namespace uDefend.Tests.AntiCheat.Detectors
             var detector = _go.AddComponent<WallHackDetector>();
 
             bool cheatingDetected = false;
-            detector.OnCheatingDetected = new UnityEngine.Events.UnityEvent();
-            detector.OnCheatingDetected.AddListener(() => cheatingDetected = true);
+            detector.AddCheatingDetectedListener(() => cheatingDetected = true);
 
             yield return null;
             Assert.IsTrue(detector.IsRunning);
@@ -73,7 +72,7 @@ namespace uDefend.Tests.AntiCheat.Detectors
 
             // Verify sandbox exists
             var wallsBefore = Resources.FindObjectsOfTypeAll<BoxCollider>()
-                .Count(c => c.gameObject.name == "__uDefend_WH_Wall");
+                .Count(c => c.gameObject.layer == 31 && c.gameObject.name.StartsWith("__"));
             Assert.IsTrue(wallsBefore > 0, "Sandbox should exist before destroy.");
 
             Object.Destroy(_go);
@@ -83,7 +82,7 @@ namespace uDefend.Tests.AntiCheat.Detectors
             // After destruction, sandbox objects should be cleaned up
             var wallsAfter = Resources.FindObjectsOfTypeAll<BoxCollider>()
                 .Where(c => c != null && c.gameObject != null)
-                .Count(c => c.gameObject.name == "__uDefend_WH_Wall");
+                .Count(c => c.gameObject.layer == 31 && c.gameObject.name.StartsWith("__"));
             Assert.AreEqual(0, wallsAfter, "Sandbox wall should be cleaned up after destroy.");
         }
 
@@ -102,7 +101,7 @@ namespace uDefend.Tests.AntiCheat.Detectors
             // Sandbox should be cleaned up when detection is stopped
             var walls = Resources.FindObjectsOfTypeAll<BoxCollider>()
                 .Where(c => c != null && c.gameObject != null)
-                .Count(c => c.gameObject.name == "__uDefend_WH_Wall");
+                .Count(c => c.gameObject.layer == 31 && c.gameObject.name.StartsWith("__"));
             Assert.AreEqual(0, walls, "Sandbox should be cleaned up after StopDetection.");
         }
     }

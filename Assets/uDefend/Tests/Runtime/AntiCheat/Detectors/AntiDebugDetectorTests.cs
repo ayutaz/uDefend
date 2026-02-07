@@ -34,8 +34,7 @@ namespace uDefend.Tests.AntiCheat.Detectors
             SetField(detector, "_detectBreakpointTiming", false);
 
             bool cheatingDetected = false;
-            detector.OnCheatingDetected = new UnityEngine.Events.UnityEvent();
-            detector.OnCheatingDetected.AddListener(() => cheatingDetected = true);
+            detector.AddCheatingDetectedListener(() => cheatingDetected = true);
 
             yield return null;
             Assert.IsTrue(detector.IsRunning);
@@ -58,8 +57,7 @@ namespace uDefend.Tests.AntiCheat.Detectors
             SetField(detector, "_detectBreakpointTiming", false);
 
             bool cheatingDetected = false;
-            detector.OnCheatingDetected = new UnityEngine.Events.UnityEvent();
-            detector.OnCheatingDetected.AddListener(() => cheatingDetected = true);
+            detector.AddCheatingDetectedListener(() => cheatingDetected = true);
 
             yield return null;
             detector.StopDetection();
@@ -81,8 +79,7 @@ namespace uDefend.Tests.AntiCheat.Detectors
             SetField(detector, "_detectBreakpointTiming", false);
 
             int callCount = 0;
-            detector.OnCheatingDetected = new UnityEngine.Events.UnityEvent();
-            detector.OnCheatingDetected.AddListener(() => callCount++);
+            detector.AddCheatingDetectedListener(() => callCount++);
 
             yield return null;
 
@@ -104,8 +101,7 @@ namespace uDefend.Tests.AntiCheat.Detectors
             SetField(detector, "_frameTimeThresholdSeconds", 999f);
 
             bool cheatingDetected = false;
-            detector.OnCheatingDetected = new UnityEngine.Events.UnityEvent();
-            detector.OnCheatingDetected.AddListener(() => cheatingDetected = true);
+            detector.AddCheatingDetectedListener(() => cheatingDetected = true);
 
             yield return null;
             Assert.IsTrue(detector.IsRunning);
@@ -132,7 +128,7 @@ namespace uDefend.Tests.AntiCheat.Detectors
             bool defaultValue = (bool)field.GetValue(detector);
 
             yield return null;
-            Assert.IsFalse(defaultValue, "Suspicious process detection should be disabled by default.");
+            Assert.IsTrue(defaultValue, "Suspicious process detection should be enabled by default.");
         }
 
         [UnityTest]
@@ -147,8 +143,7 @@ namespace uDefend.Tests.AntiCheat.Detectors
             SetField(detector, "_detectBreakpointTiming", false);
 
             bool cheatingDetected = false;
-            detector.OnCheatingDetected = new UnityEngine.Events.UnityEvent();
-            detector.OnCheatingDetected.AddListener(() => cheatingDetected = true);
+            detector.AddCheatingDetectedListener(() => cheatingDetected = true);
 
             yield return null;
 

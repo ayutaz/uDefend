@@ -29,8 +29,7 @@ namespace uDefend.Tests.AntiCheat.Detectors
             var detector = _go.AddComponent<ObscuredCheatingDetector>();
 
             bool cheatingDetected = false;
-            detector.OnCheatingDetected = new UnityEngine.Events.UnityEvent();
-            detector.OnCheatingDetected.AddListener(() => cheatingDetected = true);
+            detector.AddCheatingDetectedListener(() => cheatingDetected = true);
 
             yield return null;
             Assert.IsTrue(detector.IsRunning);
@@ -53,8 +52,7 @@ namespace uDefend.Tests.AntiCheat.Detectors
             var detector = _go.AddComponent<ObscuredCheatingDetector>();
 
             bool cheatingDetected = false;
-            detector.OnCheatingDetected = new UnityEngine.Events.UnityEvent();
-            detector.OnCheatingDetected.AddListener(() => cheatingDetected = true);
+            detector.AddCheatingDetectedListener(() => cheatingDetected = true);
 
             // Shorten check interval so PerformCheck runs quickly after tampering
             SetCheckInterval(detector, 0.05f);
@@ -87,8 +85,7 @@ namespace uDefend.Tests.AntiCheat.Detectors
             var detector = _go.AddComponent<ObscuredCheatingDetector>();
 
             bool cheatingDetected = false;
-            detector.OnCheatingDetected = new UnityEngine.Events.UnityEvent();
-            detector.OnCheatingDetected.AddListener(() => cheatingDetected = true);
+            detector.AddCheatingDetectedListener(() => cheatingDetected = true);
 
             // Shorten check interval so PerformCheck runs quickly after tampering
             SetCheckInterval(detector, 0.05f);
@@ -120,8 +117,7 @@ namespace uDefend.Tests.AntiCheat.Detectors
             var detector = _go.AddComponent<ObscuredCheatingDetector>();
 
             bool cheatingDetected = false;
-            detector.OnCheatingDetected = new UnityEngine.Events.UnityEvent();
-            detector.OnCheatingDetected.AddListener(() => cheatingDetected = true);
+            detector.AddCheatingDetectedListener(() => cheatingDetected = true);
 
             yield return null;
             Assert.IsTrue(detector.IsRunning);

@@ -16,7 +16,7 @@ namespace uDefend.AntiCheat
         [SerializeField] private bool _detectDebugEnvironmentVariables = true;
 
         [Tooltip("Detect suspicious processes (Cheat Engine, etc.). Windows only. Opt-in.")]
-        [SerializeField] private bool _detectSuspiciousProcesses = false;
+        [SerializeField] private bool _detectSuspiciousProcesses = true;
 
         [Tooltip("Process names to check (case-insensitive, partial match).")]
         [SerializeField] private string[] _suspiciousProcessNames = new[]
@@ -30,7 +30,7 @@ namespace uDefend.AntiCheat
         [SerializeField] private bool _detectBreakpointTiming = true;
 
         [Tooltip("Frame time threshold in seconds before triggering timing detection.")]
-        [SerializeField] private float _frameTimeThresholdSeconds = 10f;
+        [SerializeField] private float _frameTimeThresholdSeconds = 3f;
 
         private static readonly string[] DebugEnvironmentVariables =
         {

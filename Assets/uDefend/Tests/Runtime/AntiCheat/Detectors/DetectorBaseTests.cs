@@ -86,8 +86,7 @@ namespace uDefend.Tests.AntiCheat.Detectors
             var detector = _go.AddComponent<SpeedHackDetector>();
 
             bool eventFired = false;
-            detector.OnCheatingDetected = new UnityEngine.Events.UnityEvent();
-            detector.OnCheatingDetected.AddListener(() => eventFired = true);
+            detector.AddCheatingDetectedListener(() => eventFired = true);
 
             yield return null;
 

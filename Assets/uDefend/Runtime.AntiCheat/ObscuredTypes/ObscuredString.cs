@@ -13,7 +13,8 @@ namespace uDefend.AntiCheat
         [SerializeField] private char[] _encryptedChars;
         [SerializeField] private int _key;
         [SerializeField] private int _checksum;
-        [SerializeField] private string _fakeValue;
+        [SerializeField] private int _fakeHash;
+        [SerializeField] private int _decoyKey;
 
         public int Length => _encryptedChars == null ? 0 : _encryptedChars.Length;
 
@@ -24,7 +25,8 @@ namespace uDefend.AntiCheat
                 _encryptedChars = null;
                 _key = 0;
                 _checksum = ChecksumSalt;
-                _fakeValue = null;
+                _fakeHash = ChecksumSalt ^ 0;
+                _decoyKey = 0;
                 return;
             }
 
@@ -35,14 +37,15 @@ namespace uDefend.AntiCheat
                 _encryptedChars[i] = (char)(value[i] ^ (_key + i));
             }
             _checksum = ComputeChecksum(value);
-            _fakeValue = value;
+            _decoyKey = ObscuredRandom.Next();
+            _fakeHash = ComputeChecksum(value) ^ _decoyKey;
         }
 
         private string GetDecrypted()
         {
             if (_encryptedChars == null)
             {
-                if (!IsDefault() && _fakeValue != null)
+                if (!IsDefault())
                 {
                     OnCheatingDetected?.Invoke();
                 }
@@ -56,9 +59,10 @@ namespace uDefend.AntiCheat
             }
 
             string result = new string(decrypted);
+            Array.Clear(decrypted, 0, decrypted.Length);
 
             bool checksumFailed = ComputeChecksum(result) != _checksum;
-            bool decoyTampered = !string.Equals(_fakeValue, result, StringComparison.Ordinal);
+            bool decoyTampered = (ComputeChecksum(result) ^ _decoyKey) != _fakeHash;
 
             if (checksumFailed || decoyTampered)
             {
@@ -79,7 +83,8 @@ namespace uDefend.AntiCheat
                 _encryptedChars = null;
                 _key = 0;
                 _checksum = ChecksumSalt;
-                _fakeValue = null;
+                _fakeHash = ChecksumSalt ^ 0;
+                _decoyKey = 0;
                 return;
             }
 
@@ -90,7 +95,8 @@ namespace uDefend.AntiCheat
                 _encryptedChars[i] = (char)(value[i] ^ (_key + i));
             }
             _checksum = ComputeChecksum(value);
-            _fakeValue = value;
+            _decoyKey = ObscuredRandom.Next();
+            _fakeHash = ComputeChecksum(value) ^ _decoyKey;
         }
 
         private static int ComputeChecksum(string value)

@@ -19,7 +19,8 @@ namespace uDefend.AntiCheat
         [SerializeField] private int _key2;
         [SerializeField] private int _key3;
         [SerializeField] private int _checksum;
-        [SerializeField] private decimal _fakeValue;
+        [SerializeField] private int _fakeHash;
+        [SerializeField] private int _decoyKey;
 
         private ObscuredDecimal(decimal value)
         {
@@ -33,7 +34,8 @@ namespace uDefend.AntiCheat
             _encrypted2 = bits[2] ^ _key2;
             _encrypted3 = bits[3] ^ _key3;
             _checksum = ComputeChecksum(bits);
-            _fakeValue = value;
+            _decoyKey = ObscuredRandom.Next();
+            _fakeHash = ComputeChecksum(bits) ^ _decoyKey;
         }
 
         private static int ComputeChecksum(int[] bits)
@@ -56,9 +58,7 @@ namespace uDefend.AntiCheat
             bits[2] = _encrypted2 ^ _key2;
             bits[3] = _encrypted3 ^ _key3;
 
-            decimal decrypted = new decimal(bits);
-
-            if (ComputeChecksum(bits) != _checksum || _fakeValue != decrypted)
+            if (ComputeChecksum(bits) != _checksum || (ComputeChecksum(bits) ^ _decoyKey) != _fakeHash)
             {
                 OnCheatingDetected?.Invoke();
             }
@@ -76,7 +76,7 @@ namespace uDefend.AntiCheat
             _key2 = newKey2;
             _key3 = newKey3;
 
-            return decrypted;
+            return new decimal(bits);
         }
 
         private void SetEncrypted(decimal value)
@@ -91,7 +91,8 @@ namespace uDefend.AntiCheat
             _encrypted2 = bits[2] ^ _key2;
             _encrypted3 = bits[3] ^ _key3;
             _checksum = ComputeChecksum(bits);
-            _fakeValue = value;
+            _decoyKey = ObscuredRandom.Next();
+            _fakeHash = ComputeChecksum(bits) ^ _decoyKey;
         }
 
         // Implicit conversions

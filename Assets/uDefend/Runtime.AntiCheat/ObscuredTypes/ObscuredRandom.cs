@@ -1,27 +1,22 @@
 using System;
-using System.Threading;
+using System.Security.Cryptography;
 
 namespace uDefend.AntiCheat
 {
     /// <summary>
     /// Thread-safe random number generator for ObscuredTypes key generation.
-    /// Uses per-thread System.Random instances for performance and thread safety.
-    /// This is intentionally NOT cryptographically secure - ObscuredTypes use
-    /// obfuscation (not encryption) for memory protection against casual cheating tools.
+    /// Uses CSPRNG (RandomNumberGenerator) to prevent key prediction attacks.
     /// </summary>
     internal static class ObscuredRandom
     {
-        [ThreadStatic] private static Random s_random;
-
         /// <summary>
         /// Returns a random non-zero int, safe to call from any thread.
         /// </summary>
         public static int Next()
         {
-            if (s_random == null)
-                s_random = new Random(Environment.TickCount ^ Thread.CurrentThread.ManagedThreadId);
-
-            int key = s_random.Next(1, int.MaxValue);
+            Span<byte> buf = stackalloc byte[4];
+            RandomNumberGenerator.Fill(buf);
+            int key = BitConverter.ToInt32(buf) | 1; // ensure non-zero by setting LSB
             return key;
         }
 
@@ -30,12 +25,10 @@ namespace uDefend.AntiCheat
         /// </summary>
         public static long NextLong()
         {
-            if (s_random == null)
-                s_random = new Random(Environment.TickCount ^ Thread.CurrentThread.ManagedThreadId);
-
-            long high = (long)s_random.Next(1, int.MaxValue) << 32;
-            long low = (long)s_random.Next(0, int.MaxValue);
-            return high | low;
+            Span<byte> buf = stackalloc byte[8];
+            RandomNumberGenerator.Fill(buf);
+            long key = BitConverter.ToInt64(buf) | 1L; // ensure non-zero by setting LSB
+            return key;
         }
     }
 }

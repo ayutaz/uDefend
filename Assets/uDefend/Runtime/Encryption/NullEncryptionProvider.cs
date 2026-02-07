@@ -2,6 +2,7 @@ using System;
 
 namespace uDefend.Encryption
 {
+#if UNITY_EDITOR
     /// <summary>
     /// WARNING: This provider performs NO encryption. For development and debugging only.
     /// Do NOT use in production builds.
@@ -27,4 +28,5 @@ namespace uDefend.Encryption
             return copy;
         }
     }
+#endif
 }

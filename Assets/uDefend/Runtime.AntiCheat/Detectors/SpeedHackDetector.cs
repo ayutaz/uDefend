@@ -15,6 +15,12 @@ namespace uDefend.AntiCheat
         [Tooltip("Maximum acceptable time difference in seconds between the system clock and Unity clock before triggering detection.")]
         [SerializeField] private float _maxTimeDifferenceThreshold = 1f;
 
+        [Tooltip("Detect Time.timeScale manipulation beyond the allowed maximum.")]
+        [SerializeField] private bool _detectTimeScaleManipulation = true;
+
+        [Tooltip("Maximum allowed Time.timeScale before triggering detection.")]
+        [SerializeField] private float _maxAllowedTimeScale = 3f;
+
         private Stopwatch _stopwatch;
         private float _lastUnityTime;
 
@@ -31,6 +37,11 @@ namespace uDefend.AntiCheat
 
         protected override bool CheckForCheat()
         {
+            if (_detectTimeScaleManipulation && Time.timeScale > _maxAllowedTimeScale)
+            {
+                return true;
+            }
+
             if (_stopwatch == null)
             {
                 ResetBaseline();

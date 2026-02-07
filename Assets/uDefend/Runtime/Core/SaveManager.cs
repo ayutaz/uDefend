@@ -162,10 +162,12 @@ namespace uDefend.Core
                     return new AesCbcHmacProvider();
                 case EncryptionType.AesGcm:
                     return new AesGcmProvider();
+#if UNITY_EDITOR
                 case EncryptionType.None:
 #pragma warning disable CS0618 // Obsolete warning expected for NullEncryptionProvider
                     return new NullEncryptionProvider();
 #pragma warning restore CS0618
+#endif
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type));
             }

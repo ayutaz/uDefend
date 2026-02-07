@@ -42,25 +42,25 @@ public class AntiCheatExample : MonoBehaviour
         // --- SpeedHackDetector ---
         // Compares System.Diagnostics.Stopwatch against Time.realtimeSinceStartup.
         var speedHack = gameObject.AddComponent<SpeedHackDetector>();
-        speedHack.OnCheatingDetected.AddListener(() =>
+        speedHack.AddCheatingDetectedListener(() =>
             Debug.LogWarning("[Detector] Speed hack detected!"));
 
         // --- TimeCheatingDetector ---
         // Detects system clock manipulation (forward jumps / backward time travel).
         var timeCheating = gameObject.AddComponent<TimeCheatingDetector>();
-        timeCheating.OnCheatingDetected.AddListener(() =>
+        timeCheating.AddCheatingDetectedListener(() =>
             Debug.LogWarning("[Detector] Time cheating detected!"));
 
         // --- WallHackDetector ---
         // Creates a hidden physics sandbox; detects collision disabling.
         var wallHack = gameObject.AddComponent<WallHackDetector>();
-        wallHack.OnCheatingDetected.AddListener(() =>
+        wallHack.AddCheatingDetectedListener(() =>
             Debug.LogWarning("[Detector] Wall hack detected!"));
 
         // --- InjectionDetector ---
         // Snapshots loaded assemblies at start; flags unknown DLLs loaded later.
         var injection = gameObject.AddComponent<InjectionDetector>();
-        injection.OnCheatingDetected.AddListener(() =>
+        injection.AddCheatingDetectedListener(() =>
             Debug.LogWarning("[Detector] DLL injection detected!"));
 
         // --- ObscuredCheatingDetector ---
@@ -68,14 +68,14 @@ public class AntiCheatExample : MonoBehaviour
         // This is the component-based counterpart to the manual event subscriptions
         // in SetupCheatingDetection() below.
         var obscuredCheating = gameObject.AddComponent<ObscuredCheatingDetector>();
-        obscuredCheating.OnCheatingDetected.AddListener(() =>
+        obscuredCheating.AddCheatingDetectedListener(() =>
             Debug.LogWarning("[Detector] ObscuredType memory tampering detected!"));
 
         // --- AntiDebugDetector ---
         // Detects managed debuggers, debug environment variables, suspicious processes,
         // and breakpoint-induced timing anomalies.
         var antiDebug = gameObject.AddComponent<AntiDebugDetector>();
-        antiDebug.OnCheatingDetected.AddListener(() =>
+        antiDebug.AddCheatingDetectedListener(() =>
             Debug.LogWarning("[Detector] Debugger or cheat tool detected!"));
 
         Debug.Log("All 6 detectors initialized (autoStart = true).");

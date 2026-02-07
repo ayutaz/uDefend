@@ -24,6 +24,8 @@ namespace uDefend.Core
     {
         AesCbcHmac,
         AesGcm,
+#if UNITY_EDITOR
         None
+#endif
     }
 }
