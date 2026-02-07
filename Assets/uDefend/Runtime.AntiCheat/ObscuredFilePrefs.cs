@@ -14,7 +14,7 @@ namespace uDefend.AntiCheat
     public class ObscuredFilePrefs
     {
         private const char Separator = '|';
-        private const char KvSeparator = '=';
+        private const char KvSeparator = '\t';
         private const int ChecksumLength = 8;
 
         private readonly string _filePath;
