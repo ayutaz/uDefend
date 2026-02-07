@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using uDefend.Encryption;
 using uDefend.KeyManagement;
+using uDefend.Migration;
 using uDefend.Serialization;
 
 namespace uDefend.Core
@@ -17,9 +18,13 @@ namespace uDefend.Core
         private readonly IEncryptionProvider _encryptionProvider;
         private readonly IKeyProvider _keyProvider;
         private readonly BackupManager _backupManager;
+        private readonly MigrationRunner _migrationRunner;
         private readonly ConcurrentDictionary<string, SemaphoreSlim> _slotLocks = new ConcurrentDictionary<string, SemaphoreSlim>();
 
         public SaveManager(SaveSettings settings, IKeyProvider keyProvider)
+            : this(settings, keyProvider, null) { }
+
+        public SaveManager(SaveSettings settings, IKeyProvider keyProvider, MigrationRunner migrationRunner)
         {
             _settings = settings != null ? settings : throw new ArgumentNullException(nameof(settings));
             _keyProvider = keyProvider ?? throw new ArgumentNullException(nameof(keyProvider));
@@ -27,6 +32,7 @@ namespace uDefend.Core
             _serializer = CreateSerializer(settings.Serializer);
             _encryptionProvider = CreateEncryptionProvider(settings.Encryption);
             _backupManager = new BackupManager();
+            _migrationRunner = migrationRunner ?? new MigrationRunner(settings.CurrentVersion, settings.MinSupportedVersion);
         }
 
         public async Task SaveAsync<T>(string slotId, T data)
@@ -82,9 +88,10 @@ namespace uDefend.Core
                 CryptoUtility.SecureClear(masterKey);
 
                 byte[] data;
+                ushort fileVersion;
                 try
                 {
-                    (data, _) = await SaveFile.ReadAsync(slot.FilePath, encKey, hmacKey, _encryptionProvider)
+                    (data, fileVersion) = await SaveFile.ReadAsync(slot.FilePath, encKey, hmacKey, _encryptionProvider)
                         .ConfigureAwait(false);
                 }
                 finally
@@ -92,6 +99,10 @@ namespace uDefend.Core
                     CryptoUtility.SecureClear(encKey);
                     CryptoUtility.SecureClear(hmacKey);
                 }
+
+                // Apply migrations if the file version is older than current
+                if (_migrationRunner.NeedsMigration(fileVersion))
+                    data = _migrationRunner.Run(data, fileVersion);
 
                 T result = _serializer.Deserialize<T>(data);
                 CryptoUtility.SecureClear(data);
