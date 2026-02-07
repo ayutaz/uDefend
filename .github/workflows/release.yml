@@ -33,7 +33,7 @@ jobs:
             fi
           done
           # tar.gz 生成
-          (cd "$WORKDIR" && tar czf -) > uDefend.unitypackage
+          (cd "$WORKDIR" && tar czf - *) > uDefend.unitypackage
           echo "Package created: $(du -h uDefend.unitypackage | cut -f1)"
 
       - uses: actions/upload-artifact@v4
