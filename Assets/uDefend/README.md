@@ -64,7 +64,7 @@ openupm add com.udefend.core
 ```
 
 ### Unity Package Manager
-Add via git URL: `https://github.com/YOUR_ORG/uDefend.git?path=Assets/uDefend`
+Add via git URL: `https://github.com/ayutaz/uDefend.git?path=Assets/uDefend`
 
 ## Documentation
 

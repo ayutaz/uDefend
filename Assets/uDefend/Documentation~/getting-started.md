@@ -18,11 +18,11 @@ openupm add com.udefend.core
 
 1. Open **Window > Package Manager**
 2. Click **+** > **Add package from git URL...**
-3. Enter: `https://github.com/YOUR_ORG/uDefend.git?path=Assets/uDefend`
+3. Enter: `https://github.com/ayutaz/uDefend.git?path=Assets/uDefend`
 
 ### Via .unitypackage
 
-Download the latest `.unitypackage` from the [Releases](https://github.com/YOUR_ORG/uDefend/releases) page and import it into your project.
+Download the latest `.unitypackage` from the [Releases](https://github.com/ayutaz/uDefend/releases) page and import it into your project.
 
 ## Quick Start
 

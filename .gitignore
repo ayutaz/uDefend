@@ -80,3 +80,10 @@ crashlytics-build.properties
 # Code coverage results #
 # ================== #
 /[Cc]ode[Cc]overage/
+
+# ============ #
+# Tool-specific #
+# ============ #
+.uloop/
+.claude/settings.local.json
+nul
